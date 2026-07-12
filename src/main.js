@@ -8,6 +8,7 @@ import { FarmGrid } from './ui/FarmGrid.js';
 import { Toolbar } from './ui/Toolbar.js';
 import { Panels } from './ui/Panels.js';
 import { Tutorial } from './ui/Tutorial.js';
+import { Effects } from './ui/Effects.js';
 import { HELP_HTML } from './ui/Help.js';
 import { fmtTime, fmtClock } from './utils/helpers.js';
 
@@ -27,6 +28,7 @@ function ensureUI() {
     toolbar: new Toolbar(game),
     panels: new Panels(game),
     tutorial: new Tutorial(game),
+    effects: new Effects(game),
   };
   game.uiRefs = ui;
 }
