@@ -328,7 +328,6 @@ export class FarmSystem {
     const stage = stageIndex(p) + 1;
     if (p.mature) return g.toast(`${c.icon} ${c.name}成熟了！使用收成工具採收`, 'success');
     if (!p.watered) return g.toast(`${c.icon} ${c.name}（階段 ${stage}/${c.stages}）💧 需要澆水才會生長`, 'info');
-    const mult = g.weather.speedMult() * g.season.mult(c.id);
-    return g.toast(`${c.icon} ${c.name}（階段 ${stage}/${c.stages}）剩餘 ${fmtTime(remainingMs(p, mult))}`, 'info');
+    return g.toast(`${c.icon} ${c.name}（階段 ${stage}/${c.stages}）剩餘 ${fmtTime(remainingMs(p, g.displayMult(c.id)))}`, 'info');
   }
 }

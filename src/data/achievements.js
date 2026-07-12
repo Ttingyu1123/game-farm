@@ -14,4 +14,7 @@ export const ACHIEVEMENTS = [
   { id: 'pest10', icon: '🐛', name: '除蟲專家', desc: '驅趕 10 隻害蟲', coins: 100, check: (s) => s.stats.pestsShooed >= 10 },
   { id: 'quality10', icon: '✨', name: '品質保證', desc: '收成 10 個優質作物', coins: 150, check: (s) => s.stats.qualityHarvested >= 10 },
   { id: 'capacity3', icon: '🏗️', name: '倉儲大亨', desc: '倉庫升級 3 次', coins: 200, check: (s) => s.warehouseUpgrades >= 3 },
+  { id: 'level20', icon: '👑', name: '農場傳奇', desc: '達到等級 20', coins: 1000, check: (s) => s.level >= 20 },
+  { id: 'prestige1', icon: '🌟', name: '重新出發', desc: '完成第一次轉生', coins: 300, check: (s) => (s.prestige || 0) >= 1 },
+  { id: 'prestige3', icon: '💫', name: '輪迴大師', desc: '完成三次轉生', coins: 1000, check: (s) => (s.prestige || 0) >= 3 },
 ];

@@ -36,6 +36,30 @@ export const CROPS = [
     stages: 6, harvestAmount: 1, xp: 25, unlockLevel: 5, waterRequired: 1,
     stageIcons: ['🌰', '🌱', '🌿', '🍃', '🟠', '🎃'],
   },
+  {
+    id: 'eggplant', name: '茄子', icon: '🍆',
+    seedPrice: 150, sellPrice: 130, growthMs: 420 * 1000,
+    stages: 5, harvestAmount: 2, xp: 35, unlockLevel: 7, waterRequired: 1,
+    stageIcons: ['🌰', '🌱', '🌿', '🪴', '🍆'],
+  },
+  {
+    id: 'blueberry', name: '藍莓', icon: '🫐',
+    seedPrice: 220, sellPrice: 85, growthMs: 600 * 1000,
+    stages: 5, harvestAmount: 4, xp: 50, unlockLevel: 9, waterRequired: 1,
+    stageIcons: ['🌰', '🌱', '🌿', '🌼', '🫐'],
+  },
+  {
+    id: 'watermelon', name: '西瓜', icon: '🍉',
+    seedPrice: 350, sellPrice: 780, growthMs: 900 * 1000,
+    stages: 6, harvestAmount: 1, xp: 80, unlockLevel: 13, waterRequired: 1,
+    stageIcons: ['🌰', '🌱', '🌿', '🍃', '🟢', '🍉'],
+  },
+  {
+    id: 'goldapple', name: '金蘋果', icon: '🍎',
+    seedPrice: 800, sellPrice: 2000, growthMs: 1500 * 1000,
+    stages: 6, harvestAmount: 1, xp: 180, unlockLevel: 17, waterRequired: 1,
+    stageIcons: ['🌰', '🌱', '🌿', '🌸', '🍏', '🍎'],
+  },
 ];
 
 export const CROP_MAP = Object.fromEntries(CROPS.map((c) => [c.id, c]));

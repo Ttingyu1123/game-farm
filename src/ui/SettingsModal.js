@@ -1,3 +1,4 @@
+import { CONFIG } from '../config.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
 import { HELP_HTML } from './Help.js';
 import { showToast } from './Toast.js';
@@ -14,6 +15,7 @@ export function openSettings(game) {
         <input type="range" id="set-volume" min="0" max="1" step="0.05" value="${s.settings.volume}">
       </label>
       <div class="settings-actions">
+        <button class="btn" id="set-prestige">🌟 轉生${s.level >= CONFIG.PRESTIGE.unlockLevel ? `（目前第 ${(s.prestige || 0) + 1} 世可開始）` : `（Lv ${CONFIG.PRESTIGE.unlockLevel} 解鎖，目前 Lv ${s.level}）`}</button>
         <button class="btn" id="set-save">💾 手動存檔</button>
         <button class="btn" id="set-tutorial">🎓 重看教學</button>
         <button class="btn" id="set-help">📖 遊戲說明</button>
@@ -33,6 +35,24 @@ export function openSettings(game) {
     s.settings.volume = Number(e.target.value);
     game.changed();
     game.audio.play('click');
+  });
+  root.querySelector('#set-prestige').addEventListener('click', async () => {
+    if (!game.progression.canPrestige()) {
+      return showToast(`轉生需要達到 Lv ${CONFIG.PRESTIGE.unlockLevel}（目前 Lv ${s.level}）`, 'warn');
+    }
+    game.modal.finish(false);
+    const next = (s.prestige || 0) + 1;
+    const ok = await game.modal.confirm({
+      title: '🌟 轉生確認',
+      body: `開始<b>第 ${next} 世</b>農場？<br><br>` +
+        `<b>會重置</b>：等級、金幣、農地、倉庫、種子、道具、訂單、任務<br>` +
+        `<b>會保留</b>：成就、統計、設定<br><br>` +
+        `<b>永久加成</b>：售價 +${next * Math.round(CONFIG.PRESTIGE.sellBonus * 100)}%、` +
+        `生長速度 +${next * Math.round(CONFIG.PRESTIGE.growthBonus * 100)}%、` +
+        `初始金幣 +${next * CONFIG.PRESTIGE.startCoinsBonus}`,
+      okText: '轉生！', danger: true,
+    });
+    if (ok) game.progression.prestigeNow();
   });
   root.querySelector('#set-save').addEventListener('click', () => {
     game.save.save();

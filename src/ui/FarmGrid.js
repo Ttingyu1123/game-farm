@@ -109,7 +109,7 @@ export class FarmGrid {
     }
     const stage = stageIndex(p);
     const pct = Math.round(progressOf(p) * 100);
-    const mult = this.game.weather.speedMult() * this.game.season.mult(c.id);
+    const mult = this.game.displayMult(c.id);
     let cls = 'plot planted';
     let statusHtml = '';
     let statusTitle = '';

@@ -54,4 +54,12 @@ export const CONFIG = {
     penaltyMult: 0.7,           // 逆季作物成長 -30%
     qualityBonus: 0.1,          // 當季作物優質機率 +10%
   },
+
+  // 轉生：Lv20 重置農場換永久加成（成就與統計保留）
+  PRESTIGE: {
+    unlockLevel: 20,
+    sellBonus: 0.05,       // 每世永久售價 +5%
+    growthBonus: 0.05,     // 每世永久生長速度 +5%
+    startCoinsBonus: 200,  // 每世初始金幣 +200
+  },
 };

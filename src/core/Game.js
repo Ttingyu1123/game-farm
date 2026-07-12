@@ -54,19 +54,23 @@ export class Game {
     this.state = state;
     this.selectedTool = null;
 
-    this.save = new SaveSystem(this);
-    this.audio = new AudioSystem(this);
-    this.economy = new EconomySystem(this);
-    this.inventory = new InventorySystem(this);
-    this.progression = new ProgressionSystem(this);
-    this.weather = new WeatherSystem(this);
-    this.season = new SeasonSystem(this);
-    this.market = new MarketSystem(this);
-    this.farm = new FarmSystem(this);
-    this.shop = new ShopSystem(this);
-    this.orders = new OrderSystem(this);
-    this.tasks = new TaskSystem(this);
-    this.achievements = new AchievementSystem(this);
+    // 系統只建立一次（轉生會重複 boot；TaskSystem 等有事件訂閱，重建會重複計數）
+    if (!this._systemsReady) {
+      this.save = new SaveSystem(this);
+      this.audio = new AudioSystem(this);
+      this.economy = new EconomySystem(this);
+      this.inventory = new InventorySystem(this);
+      this.progression = new ProgressionSystem(this);
+      this.weather = new WeatherSystem(this);
+      this.season = new SeasonSystem(this);
+      this.market = new MarketSystem(this);
+      this.farm = new FarmSystem(this);
+      this.shop = new ShopSystem(this);
+      this.orders = new OrderSystem(this);
+      this.tasks = new TaskSystem(this);
+      this.achievements = new AchievementSystem(this);
+      this._systemsReady = true;
+    }
 
     const now = Date.now();
     // 離線成長：以中性倍率 1.0 補算（離線期間天氣與季節未知）
@@ -98,7 +102,7 @@ export class Game {
 
     this.weather.tick(now);
     this.season.tick(now);
-    this.farm.advanceGrowth(dt, this.weather.speedMult());
+    this.farm.advanceGrowth(dt, this.weather.speedMult() * this.prestigeMult());
     this.farm.sprinklerTick();
     this.farm.witherTick(now);
     this.farm.pestTick(now, dt);
@@ -111,6 +115,16 @@ export class Game {
       this.save.save();
     }
     this.events.emit('tick', now);
+  }
+
+  // 轉生永久生長加成
+  prestigeMult() {
+    return 1 + (this.state?.prestige || 0) * CONFIG.PRESTIGE.growthBonus;
+  }
+
+  // 顯示用：某作物目前的總生長倍率（天氣 × 季節 × 轉生）
+  displayMult(cropId) {
+    return this.weather.speedMult() * this.season.mult(cropId) * this.prestigeMult();
   }
 
   selectTool(tool) {

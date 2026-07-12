@@ -48,6 +48,7 @@ export function createInitialState(now = Date.now()) {
     coins: CONFIG.INITIAL.coins,
     level: CONFIG.INITIAL.level,
     xp: CONFIG.INITIAL.xp,
+    prestige: 0, // 轉生次數（永久加成）
     seeds: { ...emptyCropMap(), ...CONFIG.INITIAL.seeds },
     items: { fertilizer: 0, sprinkler: 0 },
     warehouse: emptyCropMap(),
