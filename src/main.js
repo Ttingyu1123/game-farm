@@ -31,12 +31,16 @@ function ensureUI() {
   game.uiRefs = ui;
 }
 
-// --- 天氣橫幅 ---
+// --- 季節/天氣橫幅 ---
 function updateWeatherBanner() {
   const el = document.getElementById('weather-banner');
   const w = game.weather.def();
-  el.innerHTML = `${w.icon} ${w.name} <span class="muted">｜${w.effect}</span>`;
-  document.getElementById('farm-area').classList.toggle('raining', w.id === 'rain');
+  const se = game.season.def();
+  el.innerHTML = `${se.icon} ${se.name} · ${w.icon} ${w.name} <span class="muted">｜${se.desc}｜${w.effect}</span>`;
+  const area = document.getElementById('farm-area');
+  area.classList.toggle('raining', w.id === 'rain');
+  area.className = area.className.replace(/\bseason-\w+\b/g, '').trim();
+  area.classList.add(`season-${se.id}`);
 }
 
 // --- 遊戲啟動後 ---
@@ -61,6 +65,10 @@ game.events.on('weather:changed', () => {
     const w = game.weather.def();
     showToast(`天氣變化：${w.icon} ${w.name}（${w.effect}）`, 'info');
   }
+});
+
+game.events.on('season:changed', () => {
+  if (game.running) updateWeatherBanner();
 });
 
 game.events.on('level:up', ({ level, reward, unlocks }) => {

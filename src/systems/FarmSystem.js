@@ -14,13 +14,15 @@ export class FarmSystem {
   }
 
   // 依時間推進生長（線上 tick 與離線補算共用）；害蟲會暫停生長
-  advanceGrowth(dt, mult = 1) {
+  // useSeason=false 用於離線補算（離線期間季節未知，採中性倍率）
+  advanceGrowth(dt, mult = 1, useSeason = true) {
     if (dt <= 0) return;
     for (const p of this.game.state.plots) {
       if (!p.cropId || !p.watered || p.mature || p.withered || p.pest) continue;
       const c = CROP_MAP[p.cropId];
       if (!c) { p.cropId = null; continue; }
-      p.growth = Math.min(c.growthMs, p.growth + dt * mult);
+      const sMult = useSeason ? this.game.season.mult(p.cropId) : 1;
+      p.growth = Math.min(c.growthMs, p.growth + dt * mult * sMult);
       if (p.growth >= c.growthMs) {
         p.mature = true;
         p.maturedAt = Date.now();
@@ -191,8 +193,10 @@ export class FarmSystem {
     const c = CROP_MAP[p.cropId];
     if (p.withered) return g.toast(`${c.name}已經枯萎，用清理工具清除`, 'warn');
     if (!p.mature) return g.toast(`${c.name}還沒成熟`, 'info');
-    // 優質判定：基礎機率 + 施肥加成
-    const qChance = CONFIG.QUALITY.baseChance + (p.fertilized ? CONFIG.QUALITY.fertilizerBonus : 0);
+    // 優質判定：基礎機率 + 施肥加成 + 當季加成
+    const qChance = CONFIG.QUALITY.baseChance
+      + (p.fertilized ? CONFIG.QUALITY.fertilizerBonus : 0)
+      + g.season.qualityBonus(c.id);
     const quality = Math.random() < qChance;
     if (!g.inventory.addCrops(c.id, c.harvestAmount, quality)) {
       g.audio.play('error');
@@ -324,6 +328,7 @@ export class FarmSystem {
     const stage = stageIndex(p) + 1;
     if (p.mature) return g.toast(`${c.icon} ${c.name}成熟了！使用收成工具採收`, 'success');
     if (!p.watered) return g.toast(`${c.icon} ${c.name}（階段 ${stage}/${c.stages}）💧 需要澆水才會生長`, 'info');
-    return g.toast(`${c.icon} ${c.name}（階段 ${stage}/${c.stages}）剩餘 ${fmtTime(remainingMs(p, g.weather.speedMult()))}`, 'info');
+    const mult = g.weather.speedMult() * g.season.mult(c.id);
+    return g.toast(`${c.icon} ${c.name}（階段 ${stage}/${c.stages}）剩餘 ${fmtTime(remainingMs(p, mult))}`, 'info');
   }
 }

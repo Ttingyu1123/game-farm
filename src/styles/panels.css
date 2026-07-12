@@ -174,3 +174,15 @@
 /* 成就 */
 .ach-earned { border-color: rgba(102, 187, 106, 0.5); }
 .ach-locked { opacity: 0.65; }
+
+/* 季節標籤 */
+.season-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 1px 8px;
+  white-space: nowrap;
+  vertical-align: 1px;
+}
+.season-tag.in { background: #e3f4e4; color: #2e7d32; }
+.season-tag.off { background: #fdecea; color: #c62828; }

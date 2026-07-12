@@ -48,4 +48,10 @@ export const CONFIG = {
   PEST: { maxActive: 2, chancePerMin: 0.35, shooXp: 2 }, // 害蟲：暫停生長，點擊驅趕
   QUALITY: { baseChance: 0.1, fertilizerBonus: 0.15, priceMult: 2 }, // 優質作物
   MARKET: { intervalMs: 5 * 60 * 1000, min: 0.8, max: 1.4 },         // 售價行情波動
+  SEASON: {
+    durationMs: 10 * 60 * 1000, // 每季 10 分鐘，春→夏→秋→冬輪替
+    boostMult: 1.3,             // 當季作物成長 +30%
+    penaltyMult: 0.7,           // 逆季作物成長 -30%
+    qualityBonus: 0.1,          // 當季作物優質機率 +10%
+  },
 };

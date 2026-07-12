@@ -14,6 +14,7 @@ import { ProgressionSystem } from '../systems/ProgressionSystem.js';
 import { AudioSystem } from '../systems/AudioSystem.js';
 import { MarketSystem } from '../systems/MarketSystem.js';
 import { AchievementSystem } from '../systems/AchievementSystem.js';
+import { SeasonSystem } from '../systems/SeasonSystem.js';
 import { clamp } from '../utils/helpers.js';
 
 export class Game {
@@ -59,6 +60,7 @@ export class Game {
     this.inventory = new InventorySystem(this);
     this.progression = new ProgressionSystem(this);
     this.weather = new WeatherSystem(this);
+    this.season = new SeasonSystem(this);
     this.market = new MarketSystem(this);
     this.farm = new FarmSystem(this);
     this.shop = new ShopSystem(this);
@@ -67,13 +69,14 @@ export class Game {
     this.achievements = new AchievementSystem(this);
 
     const now = Date.now();
-    // 離線成長：以中性倍率 1.0 補算（離線期間天氣未知）
-    if (offlineMs > 0) this.farm.advanceGrowth(offlineMs, 1);
+    // 離線成長：以中性倍率 1.0 補算（離線期間天氣與季節未知）
+    if (offlineMs > 0) this.farm.advanceGrowth(offlineMs, 1, false);
     // 離線豁免枯萎：重新計時，玩家回來永遠來得及收成
     for (const p of state.plots) {
       if (p.mature) p.maturedAt = now;
     }
     this.weather.ensure(now);
+    this.season.ensure(now);
     this.market.ensure(now);
     this.orders.ensure();
     this.tasks.ensureDaily();
@@ -94,6 +97,7 @@ export class Game {
     this.lastTick = now;
 
     this.weather.tick(now);
+    this.season.tick(now);
     this.farm.advanceGrowth(dt, this.weather.speedMult());
     this.farm.sprinklerTick();
     this.farm.witherTick(now);

@@ -13,10 +13,14 @@ export class ShopPanel {
     for (const c of CROPS) {
       const locked = s.level < c.unlockLevel;
       const owned = s.seeds[c.id] || 0;
+      const sm = this.game.season.mult(c.id);
+      const seasonTag = sm > 1
+        ? `<span class="season-tag in">當季 ⚡+30%</span>`
+        : sm < 1 ? `<span class="season-tag off">逆季 🐌-30%</span>` : '';
       h += `<div class="shop-row ${locked ? 'locked' : ''}">
         <span class="shop-icon">${c.icon}</span>
         <div class="shop-info">
-          <b>${c.name}種子</b>
+          <b>${c.name}種子 ${seasonTag}</b>
           <span class="muted">💰${c.seedPrice}／顆 · 持有 ${owned}</span>
           <span class="muted small">成長 ${fmtTime(c.growthMs)} · 收成 ${c.harvestAmount} 個 · 每個賣 💰${c.sellPrice}</span>
         </div>

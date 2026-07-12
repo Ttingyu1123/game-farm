@@ -73,6 +73,7 @@ function migrate(raw) {
   s.stats = { ...base.stats, ...(raw.stats || {}) };
   s.tutorial = { ...base.tutorial, ...(raw.tutorial || {}) };
   s.weather = { ...base.weather, ...(raw.weather || {}) };
+  s.season = { ...base.season, ...(raw.season || {}) };
   s.seeds = { ...emptyCropMap(), ...(raw.seeds || {}) };
   s.warehouse = { ...emptyCropMap(), ...(raw.warehouse || {}) };
   s.warehouseQ = { ...emptyCropMap(), ...(raw.warehouseQ || {}) };

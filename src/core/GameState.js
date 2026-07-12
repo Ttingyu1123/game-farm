@@ -63,6 +63,7 @@ export function createInitialState(now = Date.now()) {
     dailyTasks: [],
     dailyTaskDate: '',
     weather: { current: 'sunny', changedAt: now },
+    season: { current: 'spring', changedAt: now },
     tutorial: { completed: false },
     settings: { sound: true, volume: 0.6 },
     stats: {

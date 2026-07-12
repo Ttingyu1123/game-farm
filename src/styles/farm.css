@@ -6,7 +6,13 @@
   background: rgba(255, 255, 255, 0.25);
   border-radius: 16px;
   padding: 12px;
+  transition: background 0.8s;
 }
+/* 季節色調 */
+#farm-area.season-spring { background: rgba(255, 220, 235, 0.35); }
+#farm-area.season-summer { background: rgba(255, 245, 186, 0.4); }
+#farm-area.season-autumn { background: rgba(255, 214, 165, 0.4); }
+#farm-area.season-winter { background: rgba(222, 240, 255, 0.5); }
 #weather-banner {
   display: inline-flex;
   gap: 6px;

@@ -109,7 +109,7 @@ export class FarmGrid {
     }
     const stage = stageIndex(p);
     const pct = Math.round(progressOf(p) * 100);
-    const mult = this.game.weather.speedMult();
+    const mult = this.game.weather.speedMult() * this.game.season.mult(c.id);
     let cls = 'plot planted';
     let statusHtml = '';
     let statusTitle = '';
@@ -134,10 +134,12 @@ export class FarmGrid {
     const bar = p.mature ? '' : `<div class="plot-bar"><div style="width:${pct}%"></div></div>`;
     const pestBadge = p.pest ? `<span class="pest-badge">🐛</span>` : '';
     const fertBadge = p.fertilized && !p.mature ? `<span class="fert-badge" title="已施肥：優質機率提高">✨</span>` : '';
+    const sMult = this.game.season.mult(c.id);
+    const seasonNote = sMult > 1 ? '｜🌟 當季 +30% 生長' : sMult < 1 ? '｜🐌 逆季 -30% 生長' : '';
     return {
       cls,
       html: `${pestBadge}${fertBadge}<span class="plot-icon stage-${stage}">${c.stageIcons[stage] ?? c.icon}</span>${statusHtml}${bar}`,
-      title: `${c.icon} ${c.name}｜階段 ${stage + 1}/${c.stages}｜${statusTitle}`,
+      title: `${c.icon} ${c.name}｜階段 ${stage + 1}/${c.stages}｜${statusTitle}${seasonNote}`,
     };
   }
 }

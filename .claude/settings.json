@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node test-farm.js)",
-      "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node shot-v11.js)"
+      "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node shot-v11.js)",
+      "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node shot-v12.js)"
     ]
   }
 }

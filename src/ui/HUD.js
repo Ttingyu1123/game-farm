@@ -12,6 +12,7 @@ export class HUD {
         <span class="hud-chip" id="hud-coins" title="金幣">💰 0</span>
         <span class="hud-chip" id="hud-level" title="等級">Lv 1</span>
         <div id="xp-bar" title="經驗值"><div id="xp-fill"></div><span id="xp-text"></span></div>
+        <span class="hud-chip" id="hud-season" title="季節">🌸</span>
         <span class="hud-chip" id="hud-weather" title="天氣">☀️</span>
       </div>
       <div class="hud-right">
@@ -23,6 +24,7 @@ export class HUD {
     this.xpFill = this.el.querySelector('#xp-fill');
     this.xpText = this.el.querySelector('#xp-text');
     this.weatherEl = this.el.querySelector('#hud-weather');
+    this.seasonEl = this.el.querySelector('#hud-season');
     this.saveEl = this.el.querySelector('#hud-save');
     this.el.querySelector('#btn-settings').addEventListener('click', () => openSettings(game));
 
@@ -46,5 +48,8 @@ export class HUD {
     }
     const w = this.game.weather.def();
     this.weatherEl.textContent = `${w.icon} ${w.name}`;
+    const se = this.game.season.def();
+    this.seasonEl.textContent = `${se.icon} ${se.name}`;
+    this.seasonEl.title = `季節：${se.desc}（當季 +30% 生長、優質 +10%）`;
   }
 }
