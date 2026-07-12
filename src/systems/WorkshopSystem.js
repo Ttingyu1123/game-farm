@@ -44,6 +44,7 @@ export class WorkshopSystem {
     g.changed();
   }
 
+  // 開工或排入佇列（機器忙碌時）。排入當下即扣原料。
   startRecipe(machineId, recipeId) {
     const g = this.game;
     const mdef = MACHINE_MAP[machineId];
@@ -51,8 +52,12 @@ export class WorkshopSystem {
     const r = RECIPE_MAP[recipeId];
     if (!mdef || !m || !r || r.machine !== machineId) return;
     if (!m.owned) return g.toast(`還沒購買${mdef.name}`, 'warn');
-    if (m.recipeId) return g.toast(`${mdef.name}正在加工中`, 'info');
     if (g.state.level < r.unlockLevel) return g.toast(`${r.name}需要等級 ${r.unlockLevel}`, 'warn');
+    if (!Array.isArray(m.queue)) m.queue = [];
+    const busy = !!m.recipeId;
+    if (busy && m.queue.length >= CONFIG.WORKSHOP.queueMax) {
+      return g.toast(`佇列已滿（${CONFIG.WORKSHOP.queueMax} 批）`, 'warn');
+    }
     // 先檢查全部原料再扣，避免扣一半
     for (const [cid, n] of Object.entries(r.inputs)) {
       if (g.inventory.cropCount(cid) < n) {
@@ -61,15 +66,52 @@ export class WorkshopSystem {
       }
     }
     for (const [cid, n] of Object.entries(r.inputs)) g.inventory.removeCrops(cid, n);
-    m.recipeId = recipeId;
-    m.startedAt = Date.now();
-    this._notified.delete(machineId);
-    g.audio.play('plant');
-    g.toast(`${r.icon} 開始製作${r.name}（需時 ${fmtTime(r.timeMs)}）`, 'success');
-    g.events.emit('process:started', { machineId, recipeId });
+    if (busy) {
+      m.queue.push(recipeId);
+      g.audio.play('click');
+      g.toast(`${r.icon} ${r.name}已排入佇列（${m.queue.length}/${CONFIG.WORKSHOP.queueMax}）`, 'success');
+    } else {
+      m.recipeId = recipeId;
+      m.startedAt = Date.now();
+      this._notified.delete(machineId);
+      g.audio.play('plant');
+      g.toast(`${r.icon} 開始製作${r.name}（需時 ${fmtTime(r.timeMs)}）`, 'success');
+    }
+    g.events.emit('process:started', { machineId, recipeId, queued: busy });
     g.changed();
   }
 
+  // 完成入庫 + 佇列自動接續。倉庫沒空間回傳 false（成品留在機器上等收取）。
+  _finish(machineId) {
+    const g = this.game;
+    const m = this.machine(machineId);
+    const r = m?.recipeId ? RECIPE_MAP[m.recipeId] : null;
+    if (!r || !this.isReady(machineId)) return false;
+    if (g.inventory.warehouseSpace() < 1) return false;
+    g.state.products[r.id] = (g.state.products[r.id] || 0) + 1;
+    m.recipeId = null;
+    m.startedAt = null;
+    this._notified.delete(machineId);
+    g.state.stats.processed = (g.state.stats.processed || 0) + 1;
+    g.progression.addXp(r.xp);
+    g.audio.play('harvest');
+    g.toast(`${r.icon} ${r.name}完成入庫！（+${r.xp} 經驗）`, 'success');
+    g.events.emit('process:collected', r);
+    // 佇列接續
+    if (Array.isArray(m.queue) && m.queue.length) {
+      const next = m.queue.shift();
+      const nr = RECIPE_MAP[next];
+      if (nr) {
+        m.recipeId = next;
+        m.startedAt = Date.now();
+        g.toast(`${nr.icon} 佇列接續：開始製作${nr.name}`, 'info');
+      }
+    }
+    g.changed();
+    return true;
+  }
+
+  // 手動收取（倉庫曾滿而暫扣在機器上時使用）
   collect(machineId) {
     const g = this.game;
     const m = this.machine(machineId);
@@ -79,20 +121,10 @@ export class WorkshopSystem {
     if (!this.isReady(machineId)) {
       return g.toast(`${r.name}還在製作中（剩 ${fmtTime(this.remainingMs(machineId))}）`, 'info');
     }
-    if (g.inventory.warehouseSpace() < 1) {
+    if (!this._finish(machineId)) {
       g.audio.play('error');
-      return g.toast('倉庫已滿！先出售一些東西再收取', 'warn');
+      g.toast('倉庫已滿！先出售一些東西再收取', 'warn');
     }
-    g.state.products[r.id] = (g.state.products[r.id] || 0) + 1;
-    m.recipeId = null;
-    m.startedAt = null;
-    this._notified.delete(machineId);
-    g.state.stats.processed = (g.state.stats.processed || 0) + 1;
-    g.progression.addXp(r.xp);
-    g.audio.play('harvest');
-    g.toast(`${r.icon} ${r.name}完成！（+${r.xp} 經驗）`, 'success');
-    g.events.emit('process:collected', r);
-    g.changed();
   }
 
   // 產品售價固定（不吃市場行情），吃轉生加成 — ponytail: 產品要加入行情波動時改這裡
@@ -127,12 +159,13 @@ export class WorkshopSystem {
     for (const mdef of MACHINES) {
       const m = this.machine(mdef.id);
       if (!m?.owned || !m.recipeId) continue;
-      if (this.isReady(mdef.id, now) && !this._notified.has(mdef.id)) {
+      if (!this.isReady(mdef.id, now)) continue;
+      // 完成 → 自動入庫；倉庫滿則提示一次，成品留在機器上等手動收取
+      if (!this._finish(mdef.id) && !this._notified.has(mdef.id)) {
         this._notified.add(mdef.id);
         const r = RECIPE_MAP[m.recipeId];
-        this.game.toast(`${r.icon} ${r.name}做好了！到工坊收取`, 'success');
+        this.game.toast(`${r.icon} ${r.name}做好了，但倉庫已滿 — 清出空間後到工坊收取`, 'warn');
         this.game.events.emit('process:ready', { machineId: mdef.id });
-        this.game.changed();
       }
     }
   }

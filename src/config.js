@@ -55,6 +55,14 @@ export const CONFIG = {
     qualityBonus: 0.1,          // 當季作物優質機率 +10%
   },
 
+  // 工坊：佇列與加工合約訂單
+  WORKSHOP: {
+    queueMax: 2,                              // 每台機器可預排批次數
+    productOrderChance: 0.3,                  // 有機器時訂單為加工合約的機率
+    productOrderCoinFactor: 1.5,              // 加工合約溢價（高於作物訂單的 1.35）
+    productOrderLifetimeMs: 45 * 60 * 1000,   // 加工需要時間，期限較長
+  },
+
   // 轉生：Lv20 重置農場換永久加成（成就與統計保留）
   PRESTIGE: {
     unlockLevel: 20,

@@ -83,7 +83,11 @@ function migrate(raw) {
     changedAt: raw.market?.changedAt ?? base.market.changedAt,
   };
   s.achievements = Array.isArray(raw.achievements) ? raw.achievements : [];
-  s.machines = { ...initialMachines(), ...(raw.machines || {}) };
+  // 逐台合併：舊存檔的機器物件缺新欄位（如 queue）時以預設補齊
+  const im = initialMachines();
+  s.machines = Object.fromEntries(
+    Object.keys(im).map((k) => [k, { ...im[k], ...(raw.machines?.[k] || {}) }]),
+  );
   s.products = { ...(raw.products || {}) };
   s.unlockedZones = Array.isArray(raw.unlockedZones) ? raw.unlockedZones : [];
   s.orders = Array.isArray(raw.orders) ? raw.orders : [];

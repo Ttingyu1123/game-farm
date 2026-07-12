@@ -1,3 +1,4 @@
+import { CONFIG } from '../config.js';
 import { MACHINES } from '../data/machines.js';
 import { RECIPES, RECIPE_MAP } from '../data/recipes.js';
 import { CROP_MAP } from '../data/crops.js';
@@ -32,35 +33,43 @@ export class WorkshopPanel {
           : `<button class="btn btn-small btn-primary" data-action="buy-machine" data-id="${mdef.id}" ${s.coins < mdef.price ? 'disabled' : ''}>安裝（💰${mdef.price}）</button>`}
       </div>`;
     }
-    // 加工中 / 完成
-    if (m.recipeId) {
+    const busy = !!m.recipeId;
+    const queue = Array.isArray(m.queue) ? m.queue : [];
+    const queueFull = queue.length >= CONFIG.WORKSHOP.queueMax;
+    let h;
+    // 加工中 / 完成（含佇列顯示）
+    if (busy) {
       const r = RECIPE_MAP[m.recipeId];
       const ready = g.workshop.isReady(mdef.id);
       const remain = g.workshop.remainingMs(mdef.id);
       const pct = Math.round(((r.timeMs - remain) / r.timeMs) * 100);
-      return `<div class="machine-card ${ready ? 'ready' : ''}">
+      const queueHtml = queue.length
+        ? `<span class="muted small">佇列：${queue.map((id) => RECIPE_MAP[id]?.icon ?? '?').join(' ')}（${queue.length}/${CONFIG.WORKSHOP.queueMax}）</span>`
+        : '';
+      h = `<div class="machine-card ${ready ? 'ready' : ''}">
         <div class="machine-head"><span class="shop-icon">${mdef.icon}</span><b>${mdef.name}</b>
-          <span class="muted small">製作中：${r.icon} ${r.name}</span></div>
+          <span class="muted small">製作中：${r.icon} ${r.name}</span>${queueHtml}</div>
         <div class="task-bar"><div style="width:${pct}%"></div></div>
         <div class="machine-actions">
-          <span class="muted small" data-ws-remain="${mdef.id}">${ready ? '✅ 完成！' : `⏳ ${fmtTime(remain)}`}</span>
+          <span class="muted small" data-ws-remain="${mdef.id}">${ready ? '✅ 完成（倉庫滿，待收取）' : `⏳ ${fmtTime(remain)}`}</span>
           <button class="btn btn-small ${ready ? 'btn-primary' : ''}" data-action="collect" data-id="${mdef.id}" ${ready ? '' : 'disabled'}>收取</button>
-        </div>
-      </div>`;
+        </div>`;
+    } else {
+      h = `<div class="machine-card">
+        <div class="machine-head"><span class="shop-icon">${mdef.icon}</span><b>${mdef.name}</b><span class="muted small">閒置中，選擇配方：</span></div>`;
     }
-    // 閒置 → 配方清單
+    // 配方清單：閒置=開始，加工中=排入佇列
     const recipes = RECIPES.filter((r) => r.machine === mdef.id && s.level >= r.unlockLevel);
-    let h = `<div class="machine-card">
-      <div class="machine-head"><span class="shop-icon">${mdef.icon}</span><b>${mdef.name}</b><span class="muted small">閒置中，選擇配方：</span></div>`;
     for (const r of recipes) {
       const canStart = Object.entries(r.inputs).every(([cid, n]) => g.inventory.cropCount(cid) >= n);
+      const disabled = !canStart || (busy && queueFull);
       h += `<div class="recipe-row">
         <span class="recipe-icon">${r.icon}</span>
         <div class="shop-info">
           <b>${r.name} <span class="muted small">賣 💰${g.workshop.productPrice(r.id)}</span></b>
           <span class="muted small">原料 ${this.inputsHtml(r)} · 需時 ${fmtTime(r.timeMs)} · +${r.xp} 經驗</span>
         </div>
-        <button class="btn btn-small" data-action="start" data-machine="${mdef.id}" data-recipe="${r.id}" ${canStart ? '' : 'disabled'}>開始</button>
+        <button class="btn btn-small" data-action="start" data-machine="${mdef.id}" data-recipe="${r.id}" ${disabled ? 'disabled' : ''}>${busy ? '➕ 排入' : '開始'}</button>
       </div>`;
     }
     const lockedRecipes = RECIPES.filter((r) => r.machine === mdef.id && s.level < r.unlockLevel);
@@ -101,7 +110,7 @@ export class WorkshopPanel {
     for (const el of root.querySelectorAll('[data-ws-remain]')) {
       const id = el.dataset.wsRemain;
       const ready = this.game.workshop.isReady(id);
-      el.textContent = ready ? '✅ 完成！' : `⏳ ${fmtTime(this.game.workshop.remainingMs(id))}`;
+      el.textContent = ready ? '✅ 完成（倉庫滿，待收取）' : `⏳ ${fmtTime(this.game.workshop.remainingMs(id))}`;
     }
   }
 

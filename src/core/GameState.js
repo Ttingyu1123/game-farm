@@ -30,7 +30,7 @@ export function marketFactorMap() {
 }
 
 export function initialMachines() {
-  return Object.fromEntries(MACHINES.map((m) => [m.id, { owned: false, recipeId: null, startedAt: null }]));
+  return Object.fromEntries(MACHINES.map((m) => [m.id, { owned: false, recipeId: null, startedAt: null, queue: [] }]));
 }
 
 export function zoneOfPlot(id) {
