@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node test-farm.js)"
+    ]
+  }
+}

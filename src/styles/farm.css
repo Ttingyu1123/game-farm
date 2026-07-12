@@ -1,0 +1,127 @@
+#farm-area {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: auto;
+  position: relative;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  padding: 12px;
+}
+#weather-banner {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+#farm-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(56px, 92px));
+  gap: 10px;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.plot {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  border: 2px solid rgba(120, 84, 44, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px;
+  background: var(--soil);
+  transition: transform 0.12s, box-shadow 0.2s;
+  overflow: hidden;
+}
+.plot:hover { transform: scale(1.05); z-index: 2; }
+
+.plot.raw { background: repeating-linear-gradient(45deg, #cdaa74 0 8px, #c39d63 8px 16px); }
+.plot.tilled { background: repeating-linear-gradient(0deg, #9c6f45 0 6px, #8a5f3a 6px 12px); }
+.plot.dry {
+  background: repeating-linear-gradient(0deg, #9c6f45 0 6px, #8a5f3a 6px 12px);
+  border-color: #e5a04c;
+  border-style: dashed;
+}
+.plot.watered {
+  background: repeating-linear-gradient(0deg, #7a5433 0 6px, #6b4a2c 6px 12px);
+  border-color: #5f8fd9;
+}
+.plot.mature {
+  border-color: #ffd54f;
+  box-shadow: 0 0 14px rgba(255, 193, 7, 0.6);
+  animation: mature-pulse 1.6s ease-in-out infinite;
+}
+@keyframes mature-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.plot.locked {
+  background: repeating-linear-gradient(45deg, #bcb6ab 0 10px, #b0aa9e 10px 20px);
+  border-style: dashed;
+  opacity: 0.85;
+}
+.plot.sprinkler { background: linear-gradient(#cfe9f6, #a7d4ec); border-color: #5f8fd9; }
+.plot.range { outline: 3px solid rgba(95, 143, 217, 0.7); outline-offset: -3px; }
+
+.plot-icon { font-size: 1.5rem; line-height: 1.1; }
+.stage-0 { font-size: 0.85rem; }
+.stage-1 { font-size: 1.05rem; }
+.stage-2 { font-size: 1.25rem; }
+.stage-3 { font-size: 1.5rem; }
+.stage-4 { font-size: 1.75rem; }
+.stage-5 { font-size: 2rem; }
+
+.plot-sub {
+  font-size: 0.62rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 0 5px;
+  white-space: nowrap;
+  max-width: 95%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plot-sub.need { color: #1565c0; font-weight: 700; }
+.plot-sub.ok { color: #2e7d32; font-weight: 700; }
+
+.plot-bar {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.plot-bar > div {
+  height: 100%;
+  background: linear-gradient(90deg, #9ccc65, #66bb6a);
+  border-radius: 4px;
+}
+
+/* 雨天效果 */
+#farm-area.raining::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16px;
+  background-image: repeating-linear-gradient(
+    75deg,
+    rgba(110, 160, 215, 0.25) 0 2px,
+    transparent 2px 28px
+  );
+  animation: rainfall 0.6s linear infinite;
+}
+@keyframes rainfall {
+  to { background-position: -28px 28px; }
+}

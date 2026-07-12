@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#a8d08d">
+<title>療癒小農場 Cozy Pocket Farm</title>
+<link rel="stylesheet" href="src/styles/main.css">
+<link rel="stylesheet" href="src/styles/farm.css">
+<link rel="stylesheet" href="src/styles/panels.css">
+<link rel="stylesheet" href="src/styles/responsive.css">
+</head>
+<body>
+
+<!-- 開始畫面 -->
+<div id="start-screen" class="screen">
+  <div class="start-card">
+    <div class="start-logo">🌱🥕🍓🌽🎃</div>
+    <h1>療癒小農場</h1>
+    <p class="subtitle">Cozy Pocket Farm</p>
+    <div class="start-buttons">
+      <button id="btn-new-game" class="btn btn-primary">🌟 開始新遊戲</button>
+      <button id="btn-continue" class="btn" disabled>▶️ 繼續遊戲</button>
+      <button id="btn-help" class="btn">📖 遊戲說明</button>
+      <button id="btn-sound-toggle" class="btn">🔊 音效：開</button>
+      <button id="btn-wipe-save" class="btn btn-danger">🗑️ 清除存檔</button>
+    </div>
+    <p class="save-hint" id="start-save-hint"></p>
+  </div>
+</div>
+
+<!-- 遊戲主畫面 -->
+<div id="app" class="screen hidden">
+  <header id="hud"></header>
+  <main id="layout">
+    <section id="farm-area">
+      <div id="weather-banner"></div>
+      <div id="farm-grid" role="grid" aria-label="農場"></div>
+    </section>
+    <aside id="side-panels">
+      <nav id="panel-tabs">
+        <button data-tab="shop" class="tab-btn active">🛒 商店</button>
+        <button data-tab="warehouse" class="tab-btn">📦 倉庫</button>
+        <button data-tab="inventory" class="tab-btn">🎒 背包</button>
+        <button data-tab="orders" class="tab-btn">📋 訂單</button>
+        <button data-tab="tasks" class="tab-btn">✅ 任務</button>
+      </nav>
+      <div id="panel-content"></div>
+    </aside>
+  </main>
+  <footer id="toolbar"></footer>
+</div>
+
+<div id="toast-root"></div>
+<div id="modal-root" class="hidden"></div>
+<div id="tutorial-overlay" class="hidden"></div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

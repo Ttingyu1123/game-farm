@@ -1,0 +1,44 @@
+/* 平板：面板改到農場下方 */
+@media (max-width: 1080px) {
+  #app { height: auto; min-height: 100vh; }
+  #layout { flex-direction: column; }
+  #side-panels {
+    width: 100%;
+    flex: 0 0 auto;
+    max-height: 48vh;
+  }
+  #farm-grid { grid-template-columns: repeat(6, minmax(50px, 1fr)); }
+  #toolbar {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    background: var(--cream); /* sticky 疊在面板上，需不透明 */
+  }
+  .tool-status { display: none; }
+}
+
+/* 手機 */
+@media (max-width: 560px) {
+  #layout { padding: 8px; gap: 8px; }
+  #farm-area { padding: 8px; }
+  #farm-grid { gap: 6px; grid-template-columns: repeat(6, minmax(44px, 1fr)); }
+  .plot { border-radius: 10px; }
+  .plot-icon { font-size: 1.15rem; }
+  .stage-0 { font-size: 0.7rem; }
+  .stage-1 { font-size: 0.85rem; }
+  .stage-2 { font-size: 1rem; }
+  .stage-3 { font-size: 1.15rem; }
+  .stage-4 { font-size: 1.3rem; }
+  .stage-5 { font-size: 1.45rem; }
+  .plot-sub { font-size: 0.52rem; }
+  #hud { padding: 6px 8px; gap: 6px; }
+  .hud-title { display: none; }
+  #xp-bar { width: 100px; }
+  #hud-save { display: none; }
+  .start-card { padding: 28px 22px; }
+  .tool-name { display: none; }
+  .tool-btn { padding: 8px 10px; }
+  #side-panels { max-height: 52vh; }
+  .qty-btns .btn-small { padding: 4px 8px; font-size: 0.78rem; }
+  .tut-card { bottom: 76px; }
+}
