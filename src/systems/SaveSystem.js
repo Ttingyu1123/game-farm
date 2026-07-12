@@ -1,5 +1,5 @@
 import { CONFIG } from '../config.js';
-import { createInitialState, createPlot, emptyCropMap } from '../core/GameState.js';
+import { createInitialState, createPlot, emptyCropMap, initialMachines } from '../core/GameState.js';
 
 export class SaveSystem {
   constructor(game) {
@@ -83,6 +83,8 @@ function migrate(raw) {
     changedAt: raw.market?.changedAt ?? base.market.changedAt,
   };
   s.achievements = Array.isArray(raw.achievements) ? raw.achievements : [];
+  s.machines = { ...initialMachines(), ...(raw.machines || {}) };
+  s.products = { ...(raw.products || {}) };
   s.unlockedZones = Array.isArray(raw.unlockedZones) ? raw.unlockedZones : [];
   s.orders = Array.isArray(raw.orders) ? raw.orders : [];
   s.dailyTasks = Array.isArray(raw.dailyTasks) ? raw.dailyTasks : [];

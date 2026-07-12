@@ -175,6 +175,44 @@
 .ach-earned { border-color: rgba(102, 187, 106, 0.5); }
 .ach-locked { opacity: 0.65; }
 
+/* 加工工坊 */
+.machine-card {
+  background: #fffdf6;
+  border: 1px solid rgba(120, 84, 44, 0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.machine-card.ready {
+  border-color: #ffd54f;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.35);
+}
+.machine-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.machine-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+}
+.recipe-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-top: 1px dashed rgba(120, 84, 44, 0.15);
+}
+.recipe-row.locked { opacity: 0.55; }
+.recipe-icon { font-size: 1.3rem; }
+.input-missing { color: #c62828; font-weight: 700; }
+
 /* 季節標籤 */
 .season-tag {
   font-size: 0.68rem;

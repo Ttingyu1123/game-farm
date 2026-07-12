@@ -4,6 +4,7 @@ import { InventoryPanel } from './InventoryPanel.js';
 import { OrderPanel } from './OrderPanel.js';
 import { TaskPanel } from './TaskPanel.js';
 import { AchievementPanel } from './AchievementPanel.js';
+import { WorkshopPanel } from './WorkshopPanel.js';
 
 export class Panels {
   constructor(game) {
@@ -15,6 +16,7 @@ export class Panels {
       shop: new ShopPanel(game),
       warehouse: new WarehousePanel(game),
       inventory: new InventoryPanel(game),
+      workshop: new WorkshopPanel(game),
       orders: new OrderPanel(game),
       tasks: new TaskPanel(game),
       achievements: new AchievementPanel(game),

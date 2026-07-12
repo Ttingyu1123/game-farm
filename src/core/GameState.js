@@ -1,5 +1,6 @@
 import { CONFIG } from '../config.js';
 import { CROPS } from '../data/crops.js';
+import { MACHINES } from '../data/machines.js';
 
 export function emptyCropMap() {
   return Object.fromEntries(CROPS.map((c) => [c.id, 0]));
@@ -26,6 +27,10 @@ export function createPlot(id) {
 
 export function marketFactorMap() {
   return Object.fromEntries(CROPS.map((c) => [c.id, 1]));
+}
+
+export function initialMachines() {
+  return Object.fromEntries(MACHINES.map((m) => [m.id, { owned: false, recipeId: null, startedAt: null }]));
 }
 
 export function zoneOfPlot(id) {
@@ -57,6 +62,8 @@ export function createInitialState(now = Date.now()) {
     warehouseUpgrades: 0,
     market: { factors: marketFactorMap(), changedAt: now }, // 初始行情 1.0，之後每 5 分鐘波動
     achievements: [],
+    machines: initialMachines(), // 加工機器
+    products: {},                // 加工品庫存（與倉庫共用容量）
     plots,
     unlockedZones: [],
     orders: [],
@@ -70,7 +77,7 @@ export function createInitialState(now = Date.now()) {
     stats: {
       planted: 0, watered: 0, harvested: 0, sold: 0,
       ordersCompleted: 0, tasksClaimed: 0, coinsEarned: 0, coinsSpent: 0,
-      pestsShooed: 0, qualityHarvested: 0, withered: 0,
+      pestsShooed: 0, qualityHarvested: 0, withered: 0, processed: 0,
     },
   };
 }

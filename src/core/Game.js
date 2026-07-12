@@ -14,6 +14,7 @@ import { ProgressionSystem } from '../systems/ProgressionSystem.js';
 import { AudioSystem } from '../systems/AudioSystem.js';
 import { MarketSystem } from '../systems/MarketSystem.js';
 import { AchievementSystem } from '../systems/AchievementSystem.js';
+import { WorkshopSystem } from '../systems/WorkshopSystem.js';
 import { SeasonSystem } from '../systems/SeasonSystem.js';
 import { clamp } from '../utils/helpers.js';
 
@@ -68,6 +69,7 @@ export class Game {
       this.shop = new ShopSystem(this);
       this.orders = new OrderSystem(this);
       this.tasks = new TaskSystem(this);
+      this.workshop = new WorkshopSystem(this);
       this.achievements = new AchievementSystem(this);
       this._systemsReady = true;
     }
@@ -107,6 +109,7 @@ export class Game {
     this.farm.witherTick(now);
     this.farm.pestTick(now, dt);
     this.market.tick(now);
+    this.workshop.tick(now);
     this.orders.tick(now);
     this.tasks.ensureDaily();
 

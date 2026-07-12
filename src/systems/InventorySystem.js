@@ -42,7 +42,8 @@ export class InventorySystem {
 
   warehouseTotal() {
     const sum = (m) => Object.values(m).reduce((a, b) => a + (b || 0), 0);
-    return sum(this.game.state.warehouse) + sum(this.game.state.warehouseQ);
+    // 一般品 + 優質品 + 加工品共用倉庫容量
+    return sum(this.game.state.warehouse) + sum(this.game.state.warehouseQ) + sum(this.game.state.products || {});
   }
 
   warehouseSpace() {

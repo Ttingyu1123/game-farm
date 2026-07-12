@@ -45,7 +45,7 @@ export function openSettings(game) {
     const ok = await game.modal.confirm({
       title: '🌟 轉生確認',
       body: `開始<b>第 ${next} 世</b>農場？<br><br>` +
-        `<b>會重置</b>：等級、金幣、農地、倉庫、種子、道具、訂單、任務<br>` +
+        `<b>會重置</b>：等級、金幣、農地、倉庫、種子、道具、工坊機器、訂單、任務<br>` +
         `<b>會保留</b>：成就、統計、設定<br><br>` +
         `<b>永久加成</b>：售價 +${next * Math.round(CONFIG.PRESTIGE.sellBonus * 100)}%、` +
         `生長速度 +${next * Math.round(CONFIG.PRESTIGE.growthBonus * 100)}%、` +
