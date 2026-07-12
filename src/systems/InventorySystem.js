@@ -35,9 +35,14 @@ export class InventorySystem {
     return true;
   }
 
-  // --- 農產品倉庫 ---
+  // --- 農產品倉庫（一般 + ⭐優質共用容量）---
+  _bin(quality) {
+    return quality ? this.game.state.warehouseQ : this.game.state.warehouse;
+  }
+
   warehouseTotal() {
-    return Object.values(this.game.state.warehouse).reduce((a, b) => a + (b || 0), 0);
+    const sum = (m) => Object.values(m).reduce((a, b) => a + (b || 0), 0);
+    return sum(this.game.state.warehouse) + sum(this.game.state.warehouseQ);
   }
 
   warehouseSpace() {
@@ -45,19 +50,19 @@ export class InventorySystem {
   }
 
   // 容量不足回傳 false（收成前檢查）
-  addCrops(id, n) {
+  addCrops(id, n, quality = false) {
     if (n <= 0) return true;
     if (this.warehouseSpace() < n) return false;
-    const w = this.game.state.warehouse;
+    const w = this._bin(quality);
     w[id] = (w[id] || 0) + n;
     return true;
   }
 
-  cropCount(id) { return this.game.state.warehouse[id] || 0; }
+  cropCount(id, quality = false) { return this._bin(quality)[id] || 0; }
 
   // 庫存不足回傳 false，絕不讓庫存變負數
-  removeCrops(id, n) {
-    const w = this.game.state.warehouse;
+  removeCrops(id, n, quality = false) {
+    const w = this._bin(quality);
     if (n <= 0 || (w[id] || 0) < n) return false;
     w[id] -= n;
     return true;

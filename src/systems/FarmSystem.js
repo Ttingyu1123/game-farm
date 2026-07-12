@@ -13,19 +13,71 @@ export class FarmSystem {
     return this.game.state.plots[i];
   }
 
-  // 依時間推進生長（線上 tick 與離線補算共用）
+  // 依時間推進生長（線上 tick 與離線補算共用）；害蟲會暫停生長
   advanceGrowth(dt, mult = 1) {
     if (dt <= 0) return;
     for (const p of this.game.state.plots) {
-      if (!p.cropId || !p.watered || p.mature || p.withered) continue;
+      if (!p.cropId || !p.watered || p.mature || p.withered || p.pest) continue;
       const c = CROP_MAP[p.cropId];
       if (!c) { p.cropId = null; continue; }
       p.growth = Math.min(c.growthMs, p.growth + dt * mult);
       if (p.growth >= c.growthMs) {
         p.mature = true;
+        p.maturedAt = Date.now();
         this.game.events.emit('crop:matured', p);
       }
     }
+  }
+
+  // 成熟後放置太久 → 枯萎（教學期間不觸發；離線豁免由 boot 重設 maturedAt 實現）
+  witherTick(now) {
+    const g = this.game;
+    if (!g.state.tutorial.completed) return;
+    const factor = CONFIG.WITHER.graceFactor;
+    for (const p of g.state.plots) {
+      if (!p.cropId || !p.mature || p.withered || !p.maturedAt) continue;
+      const c = CROP_MAP[p.cropId];
+      if (now - p.maturedAt > c.growthMs * factor) {
+        p.withered = true;
+        p.mature = false;
+        p.pest = false;
+        g.state.stats.withered++;
+        g.toast(`🥀 ${c.name}枯萎了…用清理工具清除吧`, 'warn');
+        g.events.emit('crop:withered', p);
+        g.changed();
+      }
+    }
+  }
+
+  // 害蟲隨機出現在生長中的作物上（教學期間不觸發）
+  pestTick(now, dt) {
+    const g = this.game;
+    if (!g.state.tutorial.completed) return;
+    const conf = CONFIG.PEST;
+    const active = g.state.plots.filter((p) => p.pest).length;
+    if (active >= conf.maxActive) return;
+    if (Math.random() >= (dt / 60000) * conf.chancePerMin) return;
+    const candidates = g.state.plots.filter(
+      (p) => p.cropId && p.watered && !p.mature && !p.withered && !p.pest,
+    );
+    if (!candidates.length) return;
+    const p = candidates[Math.floor(Math.random() * candidates.length)];
+    p.pest = true;
+    g.toast('🐛 害蟲出現！點擊作物驅趕，否則生長會暫停', 'warn');
+    g.events.emit('pest:appeared', p);
+    g.changed();
+  }
+
+  shooPest(p) {
+    const g = this.game;
+    if (!p.pest) return;
+    p.pest = false;
+    g.state.stats.pestsShooed++;
+    g.progression.addXp(CONFIG.PEST.shooXp);
+    g.audio.play('click');
+    g.toast(`🐛 趕走害蟲！（+${CONFIG.PEST.shooXp} 經驗）`, 'success');
+    g.events.emit('pest:shooed', p);
+    g.changed();
   }
 
   neighbors(i) {
@@ -54,6 +106,7 @@ export class FarmSystem {
   rainTick() {
     for (const p of this.game.state.plots) {
       if (p.cropId && !p.watered && !p.mature) this.water(p, { auto: true, source: 'rain' });
+      if (p.pest) { p.pest = false; this.game.changed(); } // 雨水沖走害蟲
     }
   }
 
@@ -63,6 +116,7 @@ export class FarmSystem {
     if (!p) return;
     const tool = g.selectedTool;
     if (!p.unlocked) return this.promptUnlock(p);
+    if (p.pest) return this.shooPest(p); // 害蟲優先：任何工具點擊都先驅趕
     if (tool === 'till') return this.till(p);
     if (tool && tool.startsWith('seed:')) return this.plant(p, tool.slice(5));
     if (tool === 'water') return this.waterManual(p);
@@ -99,7 +153,10 @@ export class FarmSystem {
     p.wateredAt = null;
     p.growth = 0;
     p.mature = false;
+    p.maturedAt = null;
     p.withered = false;
+    p.pest = false;
+    p.fertilized = false;
     g.state.stats.planted++;
     g.progression.addXp(CONFIG.XP_PER_PLANT);
     g.audio.play('plant');
@@ -132,8 +189,12 @@ export class FarmSystem {
     const g = this.game;
     if (!p.cropId) return g.toast('這格沒有作物', 'info');
     const c = CROP_MAP[p.cropId];
+    if (p.withered) return g.toast(`${c.name}已經枯萎，用清理工具清除`, 'warn');
     if (!p.mature) return g.toast(`${c.name}還沒成熟`, 'info');
-    if (!g.inventory.addCrops(c.id, c.harvestAmount)) {
+    // 優質判定：基礎機率 + 施肥加成
+    const qChance = CONFIG.QUALITY.baseChance + (p.fertilized ? CONFIG.QUALITY.fertilizerBonus : 0);
+    const quality = Math.random() < qChance;
+    if (!g.inventory.addCrops(c.id, c.harvestAmount, quality)) {
       g.audio.play('error');
       return g.toast('倉庫已滿！先出售一些作物或升級倉庫', 'warn');
     }
@@ -143,12 +204,21 @@ export class FarmSystem {
     p.watered = false;
     p.growth = 0;
     p.mature = false;
+    p.maturedAt = null;
+    p.pest = false;
+    p.fertilized = false;
     // tilled 保持 true → 收成後可直接再播種
     g.state.stats.harvested++;
+    if (quality) g.state.stats.qualityHarvested += c.harvestAmount;
     g.progression.addXp(c.xp);
     g.audio.play('harvest');
-    g.events.emit('crop:harvested', { plot: p, cropId: c.id, amount: c.harvestAmount });
-    g.toast(`收成 ${c.icon} ${c.name} ×${c.harvestAmount}（+${c.xp} 經驗）`, 'success');
+    g.events.emit('crop:harvested', { plot: p, cropId: c.id, amount: c.harvestAmount, quality });
+    g.toast(
+      quality
+        ? `⭐ 收成優質${c.name} ×${c.harvestAmount}！售價 ×${CONFIG.QUALITY.priceMult}（+${c.xp} 經驗）`
+        : `收成 ${c.icon} ${c.name} ×${c.harvestAmount}（+${c.xp} 經驗）`,
+      'success',
+    );
     g.changed();
   }
 
@@ -178,7 +248,10 @@ export class FarmSystem {
     p.watered = false;
     p.growth = 0;
     p.mature = false;
+    p.maturedAt = null;
     p.withered = false;
+    p.pest = false;
+    p.fertilized = false;
     g.audio.play('click');
     g.toast('農地清理完成');
     g.changed();
@@ -193,12 +266,14 @@ export class FarmSystem {
     const c = CROP_MAP[p.cropId];
     const remain = Math.max(0, c.growthMs - p.growth);
     p.growth = Math.min(c.growthMs, p.growth + remain * CONFIG.FERTILIZER_REDUCTION);
+    p.fertilized = true; // 提高本輪優質機率
     if (p.growth >= c.growthMs && !p.mature) {
       p.mature = true;
+      p.maturedAt = Date.now();
       g.events.emit('crop:matured', p);
     }
     g.audio.play('plant');
-    g.toast(`✨ 施肥完成，${c.name}生長加速！`, 'success');
+    g.toast(`✨ 施肥完成，${c.name}生長加速、優質機率提高！`, 'success');
     g.events.emit('item:used', { itemId: 'fertilizer', plot: p });
     g.changed();
   }

@@ -100,13 +100,24 @@ export class FarmGrid {
         : { cls: 'plot raw', html: `<span class="plot-sub">未整理</span>`, title: '未整理土地：使用翻土工具開墾' };
     }
     const c = CROP_MAP[p.cropId];
+    if (p.withered) {
+      return {
+        cls: 'plot withered',
+        html: `<span class="plot-icon">🥀</span><span class="plot-sub">枯萎了</span>`,
+        title: `${c.name}枯萎了：用清理工具清除`,
+      };
+    }
     const stage = stageIndex(p);
     const pct = Math.round(progressOf(p) * 100);
     const mult = this.game.weather.speedMult();
     let cls = 'plot planted';
     let statusHtml = '';
     let statusTitle = '';
-    if (p.mature) {
+    if (p.pest) {
+      cls += ' pest';
+      statusHtml = `<span class="plot-sub need">🐛 點我驅趕</span>`;
+      statusTitle = '🐛 害蟲入侵！生長暫停，點擊驅趕';
+    } else if (p.mature) {
       cls += ' mature';
       statusHtml = `<span class="plot-sub ok">可收成！</span>`;
       statusTitle = '✨ 可收成';
@@ -121,9 +132,11 @@ export class FarmGrid {
       statusTitle = `剩餘 ${remain}`;
     }
     const bar = p.mature ? '' : `<div class="plot-bar"><div style="width:${pct}%"></div></div>`;
+    const pestBadge = p.pest ? `<span class="pest-badge">🐛</span>` : '';
+    const fertBadge = p.fertilized && !p.mature ? `<span class="fert-badge" title="已施肥：優質機率提高">✨</span>` : '';
     return {
       cls,
-      html: `<span class="plot-icon stage-${stage}">${c.stageIcons[stage] ?? c.icon}</span>${statusHtml}${bar}`,
+      html: `${pestBadge}${fertBadge}<span class="plot-icon stage-${stage}">${c.stageIcons[stage] ?? c.icon}</span>${statusHtml}${bar}`,
       title: `${c.icon} ${c.name}｜階段 ${stage + 1}/${c.stages}｜${statusTitle}`,
     };
   }

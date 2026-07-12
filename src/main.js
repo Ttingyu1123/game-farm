@@ -1,3 +1,4 @@
+import { CONFIG } from './config.js';
 import { Game } from './core/Game.js';
 import { SaveSystem } from './systems/SaveSystem.js';
 import { Modal } from './ui/Modal.js';
@@ -11,7 +12,8 @@ import { HELP_HTML } from './ui/Help.js';
 import { fmtTime, fmtClock } from './utils/helpers.js';
 
 const game = new Game();
-window.game = game; // 除錯用
+window.game = game;         // 除錯用
+window.gameConfig = CONFIG; // 除錯/測試用
 
 initToast(game);
 game.modal = new Modal();

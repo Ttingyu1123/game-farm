@@ -37,20 +37,21 @@ export class ShopSystem {
     g.changed();
   }
 
-  sellCrops(cropId, qty) {
+  // 售價 = 基礎價 × 市場行情（優質再 ×2）
+  sellCrops(cropId, qty, quality = false) {
     const g = this.game;
     const c = CROP_MAP[cropId];
     if (!c) return;
-    const have = g.inventory.cropCount(cropId);
+    const have = g.inventory.cropCount(cropId, quality);
     qty = Math.min(Math.floor(qty), have);
     if (qty <= 0) return g.toast('沒有可出售的庫存', 'info');
-    if (!g.inventory.removeCrops(cropId, qty)) return;
-    const coins = c.sellPrice * qty;
+    if (!g.inventory.removeCrops(cropId, qty, quality)) return;
+    const coins = g.market.priceOf(cropId, quality) * qty;
     g.economy.addCoins(coins, 'sell');
     g.state.stats.sold += qty;
     g.audio.play('coin');
-    g.toast(`出售 ${c.icon} ${c.name} ×${qty}，+💰${coins}`, 'success');
-    g.events.emit('crops:sold', { cropId, qty, coins });
+    g.toast(`出售 ${quality ? '⭐優質' : ''}${c.icon} ${c.name} ×${qty}，+💰${coins}`, 'success');
+    g.events.emit('crops:sold', { cropId, qty, coins, quality });
     g.changed();
   }
 

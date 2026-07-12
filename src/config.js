@@ -42,4 +42,10 @@ export const CONFIG = {
   DAILY_TASK_COUNT: 3,
   WEATHER_INTERVAL_MS: 180 * 1000, // 天氣每 3 分鐘切換
   FERTILIZER_REDUCTION: 0.25,      // 肥料縮短剩餘時間 25%
+
+  // --- v1.1 深度機制 ---
+  WITHER: { graceFactor: 3 },      // 成熟後放置超過 3× 生長時間 → 枯萎（離線時間不計）
+  PEST: { maxActive: 2, chancePerMin: 0.35, shooXp: 2 }, // 害蟲：暫停生長，點擊驅趕
+  QUALITY: { baseChance: 0.1, fertilizerBonus: 0.15, priceMult: 2 }, // 優質作物
+  MARKET: { intervalMs: 5 * 60 * 1000, min: 0.8, max: 1.4 },         // 售價行情波動
 };

@@ -3,6 +3,7 @@ import { WarehousePanel } from './WarehousePanel.js';
 import { InventoryPanel } from './InventoryPanel.js';
 import { OrderPanel } from './OrderPanel.js';
 import { TaskPanel } from './TaskPanel.js';
+import { AchievementPanel } from './AchievementPanel.js';
 
 export class Panels {
   constructor(game) {
@@ -16,6 +17,7 @@ export class Panels {
       inventory: new InventoryPanel(game),
       orders: new OrderPanel(game),
       tasks: new TaskPanel(game),
+      achievements: new AchievementPanel(game),
     };
     this.tabsEl.addEventListener('click', (e) => {
       const b = e.target.closest('[data-tab]');

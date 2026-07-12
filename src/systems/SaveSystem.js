@@ -75,7 +75,13 @@ function migrate(raw) {
   s.weather = { ...base.weather, ...(raw.weather || {}) };
   s.seeds = { ...emptyCropMap(), ...(raw.seeds || {}) };
   s.warehouse = { ...emptyCropMap(), ...(raw.warehouse || {}) };
+  s.warehouseQ = { ...emptyCropMap(), ...(raw.warehouseQ || {}) };
   s.items = { ...base.items, ...(raw.items || {}) };
+  s.market = {
+    factors: { ...base.market.factors, ...(raw.market?.factors || {}) },
+    changedAt: raw.market?.changedAt ?? base.market.changedAt,
+  };
+  s.achievements = Array.isArray(raw.achievements) ? raw.achievements : [];
   s.unlockedZones = Array.isArray(raw.unlockedZones) ? raw.unlockedZones : [];
   s.orders = Array.isArray(raw.orders) ? raw.orders : [];
   s.dailyTasks = Array.isArray(raw.dailyTasks) ? raw.dailyTasks : [];

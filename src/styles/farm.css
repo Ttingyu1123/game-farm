@@ -108,6 +108,35 @@
   border-radius: 4px;
 }
 
+/* 枯萎 */
+.plot.withered {
+  background: repeating-linear-gradient(0deg, #8a7a63 0 6px, #7d6e58 6px 12px);
+  border-color: #6d5f4b;
+  filter: saturate(0.5);
+}
+
+/* 害蟲 */
+.plot.pest { border-color: #c62828; border-style: dashed; }
+.pest-badge {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 0.85rem;
+  animation: pest-wiggle 0.5s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes pest-wiggle {
+  0%, 100% { transform: rotate(-12deg); }
+  50% { transform: rotate(12deg) translateY(-1px); }
+}
+.fert-badge {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-size: 0.7rem;
+  z-index: 2;
+}
+
 /* 雨天效果 */
 #farm-area.raining::after {
   content: '';

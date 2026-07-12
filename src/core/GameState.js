@@ -16,9 +16,16 @@ export function createPlot(id) {
     watered: false,
     growth: 0,        // 已累積的生長毫秒數
     mature: false,
-    withered: false,  // 第一版不觸發，保留結構供擴充
+    maturedAt: null,  // 成熟時間戳（枯萎倒數起點）
+    withered: false,
     hasSprinkler: false,
+    pest: false,      // 害蟲：暫停生長，點擊驅趕
+    fertilized: false, // 本輪施過肥 → 提高優質機率
   };
+}
+
+export function marketFactorMap() {
+  return Object.fromEntries(CROPS.map((c) => [c.id, 1]));
 }
 
 export function zoneOfPlot(id) {
@@ -44,8 +51,11 @@ export function createInitialState(now = Date.now()) {
     seeds: { ...emptyCropMap(), ...CONFIG.INITIAL.seeds },
     items: { fertilizer: 0, sprinkler: 0 },
     warehouse: emptyCropMap(),
+    warehouseQ: emptyCropMap(), // ⭐ 優質作物庫存
     warehouseCapacity: CONFIG.INITIAL.warehouseCapacity,
     warehouseUpgrades: 0,
+    market: { factors: marketFactorMap(), changedAt: now }, // 初始行情 1.0，之後每 5 分鐘波動
+    achievements: [],
     plots,
     unlockedZones: [],
     orders: [],
@@ -58,6 +68,7 @@ export function createInitialState(now = Date.now()) {
     stats: {
       planted: 0, watered: 0, harvested: 0, sold: 0,
       ordersCompleted: 0, tasksClaimed: 0, coinsEarned: 0, coinsSpent: 0,
+      pestsShooed: 0, qualityHarvested: 0, withered: 0,
     },
   };
 }
