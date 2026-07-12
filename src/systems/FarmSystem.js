@@ -214,13 +214,14 @@ export class FarmSystem {
     // tilled 保持 true → 收成後可直接再播種
     g.state.stats.harvested++;
     if (quality) g.state.stats.qualityHarvested += c.harvestAmount;
-    g.progression.addXp(c.xp);
+    const xpGain = Math.round(c.xp * g.festival.harvestXpMult());
+    g.progression.addXp(xpGain);
     g.audio.play('harvest');
     g.events.emit('crop:harvested', { plot: p, cropId: c.id, amount: c.harvestAmount, quality });
     g.toast(
       quality
-        ? `⭐ 收成優質${c.name} ×${c.harvestAmount}！售價 ×${CONFIG.QUALITY.priceMult}（+${c.xp} 經驗）`
-        : `收成 ${c.icon} ${c.name} ×${c.harvestAmount}（+${c.xp} 經驗）`,
+        ? `⭐ 收成優質${c.name} ×${c.harvestAmount}！售價 ×${CONFIG.QUALITY.priceMult}（+${xpGain} 經驗）`
+        : `收成 ${c.icon} ${c.name} ×${c.harvestAmount}（+${xpGain} 經驗）`,
       'success',
     );
     g.changed();

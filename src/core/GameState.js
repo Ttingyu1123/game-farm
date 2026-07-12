@@ -29,8 +29,13 @@ export function marketFactorMap() {
   return Object.fromEntries(CROPS.map((c) => [c.id, 1]));
 }
 
+// 每型機器可有多台（slots）：各插槽獨立加工與佇列
 export function initialMachines() {
-  return Object.fromEntries(MACHINES.map((m) => [m.id, { owned: false, recipeId: null, startedAt: null, queue: [] }]));
+  return Object.fromEntries(MACHINES.map((m) => [m.id, { count: 0, slots: [] }]));
+}
+
+export function createMachineSlot() {
+  return { recipeId: null, startedAt: null, queue: [] };
 }
 
 export function zoneOfPlot(id) {
@@ -72,8 +77,9 @@ export function createInitialState(now = Date.now()) {
     dailyTaskDate: '',
     weather: { current: 'sunny', changedAt: now },
     season: { current: 'spring', changedAt: now },
+    festival: { current: null, startedAt: 0, nextAt: now + CONFIG.FESTIVAL.firstDelayMs },
     tutorial: { completed: false },
-    settings: { sound: true, volume: 0.6 },
+    settings: { sound: true, volume: 0.6, music: true },
     stats: {
       planted: 0, watered: 0, harvested: 0, sold: 0,
       ordersCompleted: 0, tasksClaimed: 0, coinsEarned: 0, coinsSpent: 0,

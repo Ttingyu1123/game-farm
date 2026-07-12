@@ -15,6 +15,7 @@ import { AudioSystem } from '../systems/AudioSystem.js';
 import { MarketSystem } from '../systems/MarketSystem.js';
 import { AchievementSystem } from '../systems/AchievementSystem.js';
 import { WorkshopSystem } from '../systems/WorkshopSystem.js';
+import { FestivalSystem } from '../systems/FestivalSystem.js';
 import { SeasonSystem } from '../systems/SeasonSystem.js';
 import { clamp } from '../utils/helpers.js';
 
@@ -64,6 +65,7 @@ export class Game {
       this.progression = new ProgressionSystem(this);
       this.weather = new WeatherSystem(this);
       this.season = new SeasonSystem(this);
+      this.festival = new FestivalSystem(this);
       this.market = new MarketSystem(this);
       this.farm = new FarmSystem(this);
       this.shop = new ShopSystem(this);
@@ -83,6 +85,7 @@ export class Game {
     }
     this.weather.ensure(now);
     this.season.ensure(now);
+    this.festival.ensure(now);
     this.market.ensure(now);
     this.orders.ensure();
     this.tasks.ensureDaily();
@@ -104,7 +107,8 @@ export class Game {
 
     this.weather.tick(now);
     this.season.tick(now);
-    this.farm.advanceGrowth(dt, this.weather.speedMult() * this.prestigeMult());
+    this.festival.tick(now);
+    this.farm.advanceGrowth(dt, this.weather.speedMult() * this.prestigeMult() * this.festival.growthMult());
     this.farm.sprinklerTick();
     this.farm.witherTick(now);
     this.farm.pestTick(now, dt);
@@ -125,9 +129,9 @@ export class Game {
     return 1 + (this.state?.prestige || 0) * CONFIG.PRESTIGE.growthBonus;
   }
 
-  // 顯示用：某作物目前的總生長倍率（天氣 × 季節 × 轉生）
+  // 顯示用：某作物目前的總生長倍率（天氣 × 季節 × 轉生 × 節慶）
   displayMult(cropId) {
-    return this.weather.speedMult() * this.season.mult(cropId) * this.prestigeMult();
+    return this.weather.speedMult() * this.season.mult(cropId) * this.prestigeMult() * this.festival.growthMult();
   }
 
   selectTool(tool) {

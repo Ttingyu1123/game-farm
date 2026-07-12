@@ -31,12 +31,16 @@ function ensureUI() {
   game.uiRefs = ui;
 }
 
-// --- 季節/天氣橫幅 ---
+// --- 季節/天氣/節慶橫幅 ---
 function updateWeatherBanner() {
   const el = document.getElementById('weather-banner');
   const w = game.weather.def();
   const se = game.season.def();
-  el.innerHTML = `${se.icon} ${se.name} · ${w.icon} ${w.name} <span class="muted">｜${se.desc}｜${w.effect}</span>`;
+  const fd = game.festival.def();
+  const festHtml = fd
+    ? ` · <span class="fest-chip">${fd.icon} ${fd.name}（${fd.desc}）<span id="fest-remain"></span></span>`
+    : '';
+  el.innerHTML = `${se.icon} ${se.name} · ${w.icon} ${w.name} <span class="muted">｜${se.desc}｜${w.effect}</span>${festHtml}`;
   const area = document.getElementById('farm-area');
   area.classList.toggle('raining', w.id === 'rain');
   area.className = area.className.replace(/\bseason-\w+\b/g, '').trim();
@@ -56,6 +60,7 @@ game.events.on('booted', ({ offlineMs }) => {
   if (offlineMs > 60 * 1000) {
     showToast(`👋 歡迎回來！離線 ${fmtTime(offlineMs)} 期間作物持續成長`, 'success');
   }
+  if (game.state.settings.music) game.audio.startMusic();
   ui.tutorial.maybeStart();
 });
 
@@ -69,6 +74,13 @@ game.events.on('weather:changed', () => {
 
 game.events.on('season:changed', () => {
   if (game.running) updateWeatherBanner();
+});
+
+game.events.on('festival:started', () => { if (game.running) updateWeatherBanner(); });
+game.events.on('festival:ended', () => { if (game.running) updateWeatherBanner(); });
+game.events.on('tick', () => {
+  const el = document.getElementById('fest-remain');
+  if (el) el.textContent = ` ⏳${fmtTime(game.festival.remainingMs())}`;
 });
 
 game.events.on('level:up', ({ level, reward, unlocks }) => {

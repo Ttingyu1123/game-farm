@@ -11,6 +11,9 @@ export function openSettings(game) {
       <label class="settings-row">🔊 音效
         <input type="checkbox" id="set-sound" ${s.settings.sound ? 'checked' : ''}>
       </label>
+      <label class="settings-row">🎵 背景音樂
+        <input type="checkbox" id="set-music" ${s.settings.music ? 'checked' : ''}>
+      </label>
       <label class="settings-row">🎚️ 音量
         <input type="range" id="set-volume" min="0" max="1" step="0.05" value="${s.settings.volume}">
       </label>
@@ -30,6 +33,12 @@ export function openSettings(game) {
     s.settings.sound = e.target.checked;
     game.changed();
     if (s.settings.sound) game.audio.play('click');
+  });
+  root.querySelector('#set-music').addEventListener('change', (e) => {
+    s.settings.music = e.target.checked;
+    game.changed();
+    if (s.settings.music) game.audio.startMusic();
+    else game.audio.stopMusic();
   });
   root.querySelector('#set-volume').addEventListener('input', (e) => {
     s.settings.volume = Number(e.target.value);

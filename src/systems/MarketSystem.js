@@ -16,7 +16,8 @@ export class MarketSystem {
     const c = CROP_MAP[cropId];
     if (!c) return 0;
     const prestigeBonus = 1 + (this.game.state.prestige || 0) * CONFIG.PRESTIGE.sellBonus;
-    const p = Math.max(1, Math.round(c.sellPrice * this.factor(cropId) * prestigeBonus));
+    const festBonus = 1 + this.game.festival.sellBonus();
+    const p = Math.max(1, Math.round(c.sellPrice * this.factor(cropId) * prestigeBonus * festBonus));
     return quality ? p * CONFIG.QUALITY.priceMult : p;
   }
 

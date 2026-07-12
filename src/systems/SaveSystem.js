@@ -1,5 +1,5 @@
 import { CONFIG } from '../config.js';
-import { createInitialState, createPlot, emptyCropMap, initialMachines } from '../core/GameState.js';
+import { createInitialState, createPlot, emptyCropMap, initialMachines, createMachineSlot } from '../core/GameState.js';
 
 export class SaveSystem {
   constructor(game) {
@@ -83,11 +83,24 @@ function migrate(raw) {
     changedAt: raw.market?.changedAt ?? base.market.changedAt,
   };
   s.achievements = Array.isArray(raw.achievements) ? raw.achievements : [];
-  // 逐台合併：舊存檔的機器物件缺新欄位（如 queue）時以預設補齊
+  // 機器遷移：v1.4/1.5 單台格式 {owned, recipeId, startedAt, queue} → v1.6 多台格式 {count, slots}
   const im = initialMachines();
-  s.machines = Object.fromEntries(
-    Object.keys(im).map((k) => [k, { ...im[k], ...(raw.machines?.[k] || {}) }]),
-  );
+  s.machines = Object.fromEntries(Object.keys(im).map((k) => {
+    const rm = raw.machines?.[k];
+    if (!rm) return [k, im[k]];
+    if (Array.isArray(rm.slots)) {
+      const slots = rm.slots.map((sl) => ({ ...createMachineSlot(), ...(sl || {}) }));
+      return [k, { count: slots.length, slots }];
+    }
+    if (rm.owned) {
+      return [k, {
+        count: 1,
+        slots: [{ recipeId: rm.recipeId ?? null, startedAt: rm.startedAt ?? null, queue: Array.isArray(rm.queue) ? rm.queue : [] }],
+      }];
+    }
+    return [k, im[k]];
+  }));
+  s.festival = { ...base.festival, ...(raw.festival || {}) };
   s.products = { ...(raw.products || {}) };
   s.unlockedZones = Array.isArray(raw.unlockedZones) ? raw.unlockedZones : [];
   s.orders = Array.isArray(raw.orders) ? raw.orders : [];

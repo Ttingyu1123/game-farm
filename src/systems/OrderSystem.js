@@ -25,7 +25,7 @@ export class OrderSystem {
     const ws = CONFIG.WORKSHOP;
     // 加工合約：只出「已擁有機器 + 已解鎖」的配方，溢價高於作物訂單
     const availRecipes = RECIPES.filter(
-      (r) => r.unlockLevel <= s.level && s.machines?.[r.machine]?.owned,
+      (r) => r.unlockLevel <= s.level && (s.machines?.[r.machine]?.count || 0) > 0,
     );
     if (availRecipes.length && Math.random() < ws.productOrderChance) {
       const r = pick(availRecipes);
@@ -78,11 +78,12 @@ export class OrderSystem {
       }
     }
     s.orders.splice(idx, 1); // 先移除再發獎，杜絕重複領取
-    g.economy.addCoins(o.coins, 'order');
+    const coins = Math.round(o.coins * g.festival.orderCoinsMult()); // 訂單熱潮節慶加成
+    g.economy.addCoins(coins, 'order');
     g.progression.addXp(o.xp);
     s.stats.ordersCompleted++;
     g.audio.play('coin');
-    g.toast(`🚚 完成 ${o.customer} 的訂單！+💰${o.coins}、+⭐${o.xp}`, 'success');
+    g.toast(`🚚 完成 ${o.customer} 的訂單！+💰${coins}、+⭐${o.xp}`, 'success');
     g.events.emit('order:completed', o);
     this.ensure();
     g.changed();

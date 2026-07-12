@@ -63,6 +63,19 @@ export const CONFIG = {
     productOrderLifetimeMs: 45 * 60 * 1000,   // 加工需要時間，期限較長
   },
 
+  // 同型機器多台：產能擴充的金幣沉沒點
+  MACHINE_EXTRA: {
+    maxPerType: 3,
+    priceGrowth: 0.8, // 第 n+1 台價格 = 基價 × (1 + 0.8n)
+  },
+
+  // 節慶限時活動
+  FESTIVAL: {
+    firstDelayMs: 5 * 60 * 1000,   // 開局 5 分鐘後第一場
+    intervalMs: 30 * 60 * 1000,    // 場與場之間間隔
+    durationMs: 8 * 60 * 1000,     // 每場 8 分鐘
+  },
+
   // 轉生：Lv20 重置農場換永久加成（成就與統計保留）
   PRESTIGE: {
     unlockLevel: 20,

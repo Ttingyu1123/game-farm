@@ -22,6 +22,19 @@
   padding: 6px 16px;
   font-weight: 600;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.fest-chip {
+  background: linear-gradient(90deg, #ffe082, #ffcc80);
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-weight: 700;
+  color: #7a4f01;
+  animation: fest-glow 1.6s ease-in-out infinite;
+}
+@keyframes fest-glow {
+  0%, 100% { box-shadow: 0 0 4px rgba(255, 179, 0, 0.4); }
+  50% { box-shadow: 0 0 12px rgba(255, 179, 0, 0.8); }
 }
 
 #farm-grid {

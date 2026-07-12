@@ -212,6 +212,11 @@
 .recipe-row.locked { opacity: 0.55; }
 .recipe-icon { font-size: 1.3rem; }
 .input-missing { color: #c62828; font-weight: 700; }
+.slot-row {
+  padding: 6px 8px;
+  border-top: 1px dashed rgba(120, 84, 44, 0.15);
+}
+.slot-row.ready { background: #fff8dc; border-radius: 8px; }
 
 /* 季節標籤 */
 .season-tag {

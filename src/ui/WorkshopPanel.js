@@ -19,11 +19,34 @@ export class WorkshopPanel {
     }).join(' ');
   }
 
+  slotHtml(mdef, sl, i) {
+    const g = this.game;
+    if (!sl.recipeId) {
+      return `<div class="slot-row"><span class="muted small">機台 ${i + 1}：閒置中</span></div>`;
+    }
+    const r = RECIPE_MAP[sl.recipeId];
+    const ready = g.workshop.isReadySlot(mdef.id, i);
+    const remain = g.workshop.remainingMsSlot(mdef.id, i);
+    const pct = Math.round(((r.timeMs - remain) / r.timeMs) * 100);
+    const queue = Array.isArray(sl.queue) ? sl.queue : [];
+    const queueHtml = queue.length
+      ? ` <span class="muted small">佇列：${queue.map((id) => RECIPE_MAP[id]?.icon ?? '?').join(' ')}（${queue.length}/${CONFIG.WORKSHOP.queueMax}）</span>`
+      : '';
+    return `<div class="slot-row ${ready ? 'ready' : ''}">
+      <span class="muted small">機台 ${i + 1}：${r.icon} ${r.name}${queueHtml}</span>
+      <div class="task-bar"><div style="width:${pct}%"></div></div>
+      <div class="machine-actions">
+        <span class="muted small" data-ws-remain="${mdef.id}:${i}">${ready ? '✅ 完成（倉庫滿，待收取）' : `⏳ ${fmtTime(remain)}`}</span>
+        <button class="btn btn-small ${ready ? 'btn-primary' : ''}" data-action="collect" data-id="${mdef.id}" data-slot="${i}" ${ready ? '' : 'disabled'}>收取</button>
+      </div>
+    </div>`;
+  }
+
   machineHtml(mdef) {
     const g = this.game, s = g.state;
     const m = s.machines[mdef.id];
     // 未擁有 → 購買列
-    if (!m.owned) {
+    if (!(m?.count > 0)) {
       const locked = s.level < mdef.unlockLevel;
       return `<div class="shop-row ${locked ? 'locked' : ''}">
         <span class="shop-icon">${mdef.icon}</span>
@@ -33,43 +56,30 @@ export class WorkshopPanel {
           : `<button class="btn btn-small btn-primary" data-action="buy-machine" data-id="${mdef.id}" ${s.coins < mdef.price ? 'disabled' : ''}>安裝（💰${mdef.price}）</button>`}
       </div>`;
     }
-    const busy = !!m.recipeId;
-    const queue = Array.isArray(m.queue) ? m.queue : [];
-    const queueFull = queue.length >= CONFIG.WORKSHOP.queueMax;
-    let h;
-    // 加工中 / 完成（含佇列顯示）
-    if (busy) {
-      const r = RECIPE_MAP[m.recipeId];
-      const ready = g.workshop.isReady(mdef.id);
-      const remain = g.workshop.remainingMs(mdef.id);
-      const pct = Math.round(((r.timeMs - remain) / r.timeMs) * 100);
-      const queueHtml = queue.length
-        ? `<span class="muted small">佇列：${queue.map((id) => RECIPE_MAP[id]?.icon ?? '?').join(' ')}（${queue.length}/${CONFIG.WORKSHOP.queueMax}）</span>`
-        : '';
-      h = `<div class="machine-card ${ready ? 'ready' : ''}">
-        <div class="machine-head"><span class="shop-icon">${mdef.icon}</span><b>${mdef.name}</b>
-          <span class="muted small">製作中：${r.icon} ${r.name}</span>${queueHtml}</div>
-        <div class="task-bar"><div style="width:${pct}%"></div></div>
-        <div class="machine-actions">
-          <span class="muted small" data-ws-remain="${mdef.id}">${ready ? '✅ 完成（倉庫滿，待收取）' : `⏳ ${fmtTime(remain)}`}</span>
-          <button class="btn btn-small ${ready ? 'btn-primary' : ''}" data-action="collect" data-id="${mdef.id}" ${ready ? '' : 'disabled'}>收取</button>
-        </div>`;
-    } else {
-      h = `<div class="machine-card">
-        <div class="machine-head"><span class="shop-icon">${mdef.icon}</span><b>${mdef.name}</b><span class="muted small">閒置中，選擇配方：</span></div>`;
-    }
-    // 配方清單：閒置=開始，加工中=排入佇列
+    const nextPrice = g.workshop.nextPrice(mdef.id);
+    const canBuyMore = m.count < CONFIG.MACHINE_EXTRA.maxPerType;
+    let h = `<div class="machine-card">
+      <div class="machine-head"><span class="shop-icon">${mdef.icon}</span><b>${mdef.name}</b>
+        <span class="muted small">×${m.count} 台</span>
+        ${canBuyMore
+          ? `<button class="btn btn-small" data-action="buy-machine" data-id="${mdef.id}" ${s.coins < nextPrice ? 'disabled' : ''}>➕ 加購（💰${nextPrice}）</button>`
+          : `<span class="lock-tag">已滿 3 台</span>`}
+      </div>`;
+    m.slots.forEach((sl, i) => { h += this.slotHtml(mdef, sl, i); });
+    // 配方清單：自動挑機台（閒置=開始，全忙=排入佇列）
+    const pick = g.workshop.pickSlot(mdef.id);
     const recipes = RECIPES.filter((r) => r.machine === mdef.id && s.level >= r.unlockLevel);
     for (const r of recipes) {
       const canStart = Object.entries(r.inputs).every(([cid, n]) => g.inventory.cropCount(cid) >= n);
-      const disabled = !canStart || (busy && queueFull);
+      const disabled = !canStart || !pick;
+      const label = !pick ? '全滿' : pick.queued ? '➕ 排入' : '開始';
       h += `<div class="recipe-row">
         <span class="recipe-icon">${r.icon}</span>
         <div class="shop-info">
           <b>${r.name} <span class="muted small">賣 💰${g.workshop.productPrice(r.id)}</span></b>
           <span class="muted small">原料 ${this.inputsHtml(r)} · 需時 ${fmtTime(r.timeMs)} · +${r.xp} 經驗</span>
         </div>
-        <button class="btn btn-small" data-action="start" data-machine="${mdef.id}" data-recipe="${r.id}" ${disabled ? 'disabled' : ''}>${busy ? '➕ 排入' : '開始'}</button>
+        <button class="btn btn-small" data-action="start" data-machine="${mdef.id}" data-recipe="${r.id}" ${disabled ? 'disabled' : ''}>${label}</button>
       </div>`;
     }
     const lockedRecipes = RECIPES.filter((r) => r.machine === mdef.id && s.level < r.unlockLevel);
@@ -108,9 +118,10 @@ export class WorkshopPanel {
 
   live(root) {
     for (const el of root.querySelectorAll('[data-ws-remain]')) {
-      const id = el.dataset.wsRemain;
-      const ready = this.game.workshop.isReady(id);
-      el.textContent = ready ? '✅ 完成（倉庫滿，待收取）' : `⏳ ${fmtTime(this.game.workshop.remainingMs(id))}`;
+      const [id, idx] = el.dataset.wsRemain.split(':');
+      const i = Number(idx) || 0;
+      const ready = this.game.workshop.isReadySlot(id, i);
+      el.textContent = ready ? '✅ 完成（倉庫滿，待收取）' : `⏳ ${fmtTime(this.game.workshop.remainingMsSlot(id, i))}`;
     }
   }
 
@@ -118,7 +129,7 @@ export class WorkshopPanel {
     const g = this.game;
     if (d.action === 'buy-machine') return g.workshop.buyMachine(d.id);
     if (d.action === 'start') return g.workshop.startRecipe(d.machine, d.recipe);
-    if (d.action === 'collect') return g.workshop.collect(d.id);
+    if (d.action === 'collect') return g.workshop.collect(d.id, Number(d.slot) || 0);
     if (d.action === 'sell-product') {
       const qty = d.qty === 'all' ? (g.state.products[d.id] || 0) : Number(d.qty);
       g.workshop.sellProduct(d.id, qty);
