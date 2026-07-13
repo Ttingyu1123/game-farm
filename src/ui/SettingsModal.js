@@ -22,6 +22,7 @@ export function openSettings(game) {
         <button class="btn" id="set-save">💾 手動存檔</button>
         <button class="btn" id="set-tutorial">🎓 重看教學</button>
         <button class="btn" id="set-help">📖 遊戲說明</button>
+        <button class="btn" id="set-guide">📚 完整攻略</button>
         <button class="btn" id="set-menu">🏠 返回主選單</button>
         <button class="btn btn-danger" id="set-wipe">🗑️ 清除存檔</button>
       </div>
@@ -74,6 +75,9 @@ export function openSettings(game) {
   root.querySelector('#set-help').addEventListener('click', async () => {
     game.modal.finish(false);
     await game.modal.info({ title: '📖 遊戲說明', body: HELP_HTML });
+  });
+  root.querySelector('#set-guide').addEventListener('click', () => {
+    window.open('guide.html', '_blank', 'noopener');
   });
   root.querySelector('#set-menu').addEventListener('click', () => {
     game.stop();

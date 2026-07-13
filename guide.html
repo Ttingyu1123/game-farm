@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>療癒小農場 — 完整攻略說明書</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-top: #cde9f6; --bg-mid: #dff0cf; --bg-bot: #cfe8b9;
+    --cream: #fff8ec; --cream2: #f7ecd8; --line: #e3d3b8;
+    --ink: #4e3d2c; --dim: #93826d; --green: #5a9e46; --green-deep: #3e7a2e;
+    --accent: #f4511e; --gold: #b8860b; --blue: #1565c0; --red: #c62828;
+  }
+  html, body {
+    background: linear-gradient(var(--bg-top), var(--bg-mid) 30%, var(--bg-bot));
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: "Segoe UI", "Microsoft JhengHei", "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+    line-height: 1.8; font-size: 16px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 32px 20px 90px; }
+  header.top { text-align: center; padding: 24px 0 6px; }
+  header.top .logo { font-size: 2.2rem; letter-spacing: 6px; }
+  header.top h1 { color: var(--green-deep); font-size: 32px; letter-spacing: 3px; margin-top: 6px; }
+  header.top .sub { color: var(--dim); font-size: 14px; letter-spacing: 2px; margin-top: 4px; }
+  header.top .play {
+    display: inline-block; margin-top: 18px; padding: 11px 30px; border-radius: 999px;
+    background: linear-gradient(180deg, #ff8a65, var(--accent)); color: #fff; font-weight: 700;
+    text-decoration: none; letter-spacing: 2px; box-shadow: 0 4px 14px rgba(93, 64, 28, .22);
+    transition: transform .12s;
+  }
+  header.top .play:hover { transform: translateY(-2px); }
+  .toc {
+    background: var(--cream); border: 1px solid var(--line); border-radius: 16px;
+    padding: 18px 22px; margin: 28px 0; box-shadow: 0 4px 14px rgba(93, 64, 28, .1);
+  }
+  .toc h2 { font-size: 15px; color: var(--dim); letter-spacing: 2px; margin-bottom: 8px; }
+  .toc ol { columns: 2; column-gap: 30px; list-style: none; counter-reset: t; }
+  .toc li { counter-increment: t; padding: 3px 0; break-inside: avoid; }
+  .toc li::before { content: counter(t) "."; color: var(--green); font-weight: 700; margin-right: 8px; }
+  .toc a { color: var(--ink); text-decoration: none; }
+  .toc a:hover { color: var(--green-deep); text-decoration: underline; }
+  section { margin: 40px 0; }
+  h2.sec {
+    font-size: 23px; color: var(--green-deep); border-left: 5px solid var(--green);
+    padding-left: 12px; margin-bottom: 14px; letter-spacing: 1px;
+  }
+  h3 { font-size: 17px; color: var(--gold); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 4px; padding-left: 24px; }
+  li { margin: 5px 0; }
+  strong { color: #33240f; }
+  .card {
+    background: var(--cream); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 20px; margin: 14px 0; box-shadow: 0 3px 10px rgba(93, 64, 28, .08);
+  }
+  .steps { list-style: none; padding: 0; counter-reset: s; }
+  .steps > li {
+    counter-increment: s; position: relative; padding: 12px 14px 12px 58px;
+    background: var(--cream); border: 1px solid var(--line); border-radius: 12px; margin: 10px 0;
+  }
+  .steps > li::before {
+    content: counter(s); position: absolute; left: 14px; top: 12px;
+    width: 30px; height: 30px; border-radius: 50%; background: var(--green); color: #fff;
+    font-weight: 800; display: grid; place-items: center;
+  }
+  .tbl { overflow-x: auto; margin: 12px 0; border-radius: 12px; border: 1px solid var(--line); }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; background: var(--cream); }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--cream2); color: var(--green-deep); white-space: nowrap; }
+  td.num { text-align: right; white-space: nowrap; }
+  .pill { display: inline-block; padding: 1px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .p-up { background: #e3f4e4; color: #2e7d32; }
+  .p-down { background: #fdecea; color: var(--red); }
+  .p-info { background: #e3f0fb; color: var(--blue); }
+  .p-gold { background: #fff3d6; color: var(--gold); }
+  .note { font-size: 14px; color: var(--dim); }
+  .best { background: #f3fbef; }
+  footer { text-align: center; color: var(--dim); font-size: 13px; margin-top: 60px; }
+  footer a { color: var(--green-deep); }
+  @media (max-width: 620px) {
+    .toc ol { columns: 1; }
+    html, body { font-size: 15px; }
+    h2.sec { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="logo">🌱🥕🍓🌽🎃</div>
+  <h1>療癒小農場 完整攻略說明書</h1>
+  <div class="sub">Cozy Pocket Farm — Game Guide</div>
+  <a class="play" href="./">▶ 立即遊玩</a>
+</header>
+
+<nav class="toc">
+  <h2>目 錄</h2>
+  <ol>
+    <li><a href="#s1">遊戲目標與核心循環</a></li>
+    <li><a href="#s2">30 秒快速上手</a></li>
+    <li><a href="#s3">介面導覽</a></li>
+    <li><a href="#s4">作物圖鑑（10 種全數值）</a></li>
+    <li><a href="#s5">季節輪作表</a></li>
+    <li><a href="#s6">天氣系統</a></li>
+    <li><a href="#s7">田間管理：害蟲・枯萎・優質・道具</a></li>
+    <li><a href="#s8">市場行情與出售策略</a></li>
+    <li><a href="#s9">訂單與加工合約</a></li>
+    <li><a href="#s10">加工工坊（機器＋配方全表）</a></li>
+    <li><a href="#s11">農地・倉庫・等級</a></li>
+    <li><a href="#s12">每日任務與成就</a></li>
+    <li><a href="#s13">節慶限時活動</a></li>
+    <li><a href="#s14">轉生系統</a></li>
+    <li><a href="#s15">開局到終局路線攻略</a></li>
+    <li><a href="#s16">常見問題 FAQ</a></li>
+  </ol>
+</nav>
+
+<section id="s1">
+  <h2 class="sec">1 ・ 遊戲目標與核心循環</h2>
+  <p>《療癒小農場》是一款單機瀏覽器農場經營遊戲。核心循環：</p>
+  <p class="card"><strong>買種子 → 翻土 → 播種 → 澆水 → 等待成長 → 收成 → 出售／加工／交訂單 → 賺金幣與經驗 → 解鎖更多內容</strong></p>
+  <p>遊戲自動存檔在瀏覽器裡，<strong>關閉頁面作物照樣長</strong>（離線成長，上限 12 小時）。長期目標是升到 Lv 20 開啟「轉生」，用永久加成開始滾雪球的下一世。</p>
+</section>
+
+<section id="s2">
+  <h2 class="sec">2 ・ 30 秒快速上手</h2>
+  <ol class="steps">
+    <li>下方工具列選 <strong>🪓 翻土</strong>，點一格「未整理」的土地。</li>
+    <li>選 <strong>🥕 胡蘿蔔種子</strong>，點剛翻好的土播種。</li>
+    <li>選 <strong>💧 澆水</strong> 點作物 — <strong>澆水後才會開始生長</strong>。</li>
+    <li>等 30 秒，格子發金光就用 <strong>🧺 收成</strong> 採收。</li>
+    <li>打開右側 <strong>📦 倉庫</strong> 賣掉，再到 <strong>🛒 商店</strong> 買更多種子 — 開始滾雪球！</li>
+  </ol>
+  <p class="note">工具按一次選取、再按一次取消；點農地前先看右下角目前選了什麼。</p>
+</section>
+
+<section id="s3">
+  <h2 class="sec">3 ・ 介面導覽</h2>
+  <div class="tbl"><table>
+    <tr><th>區域</th><th>內容</th></tr>
+    <tr><td>頂部 HUD</td><td>💰 金幣、Lv 等級與經驗條、🌸 季節、☀️ 天氣、🌟 轉生世代、💾 最近存檔時間、⚙️ 設定</td></tr>
+    <tr><td>農場橫幅</td><td>目前季節＋天氣效果；節慶進行中會出現發光倒數徽章</td></tr>
+    <tr><td>農場</td><td>6×8 共 48 格；鎖定格顯示解鎖等級與價格，點擊查看</td></tr>
+    <tr><td>右側面板</td><td>🛒 商店／📦 倉庫／🎒 背包／🏭 工坊／📋 訂單／✅ 任務／🏆 成就</td></tr>
+    <tr><td>底部工具列</td><td>翻土・澆水・收成・清理＋種子快捷鍵＋肥料與灑水器</td></tr>
+  </table></div>
+  <p class="note">滑鼠移到格子上有詳細提示；手機長按無效，改用「未選工具時點格子」查看資訊。</p>
+</section>
+
+<section id="s4">
+  <h2 class="sec">4 ・ 作物圖鑑（10 種全數值）</h2>
+  <p>「淨利／分」以基礎價計（未含行情、季節與轉生加成），是<strong>每一格每分鐘</strong>的參考效率：</p>
+  <div class="tbl"><table>
+    <tr><th>作物</th><th>解鎖</th><th class="num">種子價</th><th class="num">生長時間</th><th class="num">收成量</th><th class="num">單個售價</th><th class="num">經驗</th><th class="num">淨利／分</th></tr>
+    <tr><td>🥕 胡蘿蔔</td><td>Lv 1</td><td class="num">10</td><td class="num">30 秒</td><td class="num">1</td><td class="num">22</td><td class="num">3</td><td class="num">24</td></tr>
+    <tr><td>🌾 小麥</td><td>Lv 1</td><td class="num">14</td><td class="num">45 秒</td><td class="num">2</td><td class="num">12</td><td class="num">4</td><td class="num">13</td></tr>
+    <tr><td>🍅 番茄</td><td>Lv 2</td><td class="num">25</td><td class="num">1 分 15 秒</td><td class="num">2</td><td class="num">30</td><td class="num">7</td><td class="num">28</td></tr>
+    <tr><td>🍓 草莓</td><td>Lv 3</td><td class="num">40</td><td class="num">2 分</td><td class="num">3</td><td class="num">32</td><td class="num">10</td><td class="num">28</td></tr>
+    <tr><td>🌽 玉米</td><td>Lv 4</td><td class="num">60</td><td class="num">3 分</td><td class="num">3</td><td class="num">45</td><td class="num">15</td><td class="num">25</td></tr>
+    <tr><td>🎃 南瓜</td><td>Lv 5</td><td class="num">100</td><td class="num">5 分</td><td class="num">1</td><td class="num">230</td><td class="num">25</td><td class="num">26</td></tr>
+    <tr><td>🍆 茄子</td><td>Lv 7</td><td class="num">150</td><td class="num">7 分</td><td class="num">2</td><td class="num">130</td><td class="num">35</td><td class="num">16</td></tr>
+    <tr><td>🫐 藍莓</td><td>Lv 9</td><td class="num">220</td><td class="num">10 分</td><td class="num">4</td><td class="num">85</td><td class="num">50</td><td class="num">12</td></tr>
+    <tr><td>🍉 西瓜</td><td>Lv 13</td><td class="num">350</td><td class="num">15 分</td><td class="num">1</td><td class="num">780</td><td class="num">80</td><td class="num">29</td></tr>
+    <tr class="best"><td>🍎 金蘋果</td><td>Lv 17</td><td class="num">800</td><td class="num">25 分</td><td class="num">1</td><td class="num">2000</td><td class="num">180</td><td class="num"><strong>48</strong></td></tr>
+  </table></div>
+  <ul>
+    <li><strong>盯著玩</strong>選短週期（胡蘿蔔／番茄），<strong>掛機再回來</strong>選長週期（南瓜以上）。</li>
+    <li>🥕 胡蘿蔔是前期經驗效率王；🍆 茄子與 🫐 藍莓單看直賣偏弱，<strong>真正的價值在加工原料</strong>（見第 10 節）。</li>
+    <li>🍎 金蘋果是終局搖錢樹 — 直賣就是全場最高效率，加工成金蘋果蜜更誇張。</li>
+  </ul>
+</section>
+
+<section id="s5">
+  <h2 class="sec">5 ・ 季節輪作表</h2>
+  <p>每 <strong>10 分鐘</strong>換季（春→夏→秋→冬）。<span class="pill p-up">當季 生長 +30%・優質 +10%</span>　<span class="pill p-down">逆季 生長 −30%</span>，商店的種子卡會直接標示。</p>
+  <div class="tbl"><table>
+    <tr><th>季節</th><th>當季（+30%）</th><th>逆季（−30%）</th></tr>
+    <tr><td>🌸 春天</td><td>🥕 胡蘿蔔・🍓 草莓・🫐 藍莓</td><td>🎃 南瓜</td></tr>
+    <tr><td>☀️ 夏天</td><td>🍅 番茄・🌽 玉米・🍉 西瓜・🍆 茄子</td><td>🍓 草莓</td></tr>
+    <tr><td>🍂 秋天</td><td>🎃 南瓜・🌾 小麥・🍎 金蘋果</td><td>🥕 胡蘿蔔・🍉 西瓜</td></tr>
+    <tr><td>❄️ 冬天</td><td>🌾 小麥（唯一耐寒）</td><td>🍅 番茄・🍓 草莓・🍆 茄子・🍉 西瓜</td></tr>
+  </table></div>
+  <ul>
+    <li><strong>跟著季節種</strong>是最基本也最划算的紀律；新遊戲固定從春天開始（教學的胡蘿蔔剛好當季）。</li>
+    <li><strong>冬天是規劃期</strong>：只有小麥好種 — 進冬前囤貨等行情、把倉庫塞滿加工佇列，或衝小麥系加工（麵包）。</li>
+    <li>金蘋果不怕冬天（非逆季），秋天種還有 +30%。</li>
+  </ul>
+</section>
+
+<section id="s6">
+  <h2 class="sec">6 ・ 天氣系統</h2>
+  <div class="tbl"><table>
+    <tr><th>天氣</th><th>效果</th></tr>
+    <tr><td>☀️ 晴天</td><td>無額外效果</td></tr>
+    <tr><td>⛅ 多雲</td><td>全作物生長 <strong>+15%</strong></td></tr>
+    <tr><td>🌧️ 雨天</td><td><strong>自動幫所有作物澆水</strong>，並沖走全部害蟲</td></tr>
+  </table></div>
+  <p>約每 3 分鐘變化一次。雨天是大量播種的好時機 — 種下去不用逐格澆水。天氣加成與季節、轉生、節慶<strong>相乘</strong>疊加。</p>
+</section>
+
+<section id="s7">
+  <h2 class="sec">7 ・ 田間管理：害蟲・枯萎・優質・道具</h2>
+  <h3>🐛 害蟲</h3>
+  <ul>
+    <li>生長中的作物隨機被入侵（同時最多 2 隻），<strong>生長完全暫停</strong>直到你點擊驅趕（+2 經驗）。</li>
+    <li>雨天自動沖走；新手教學期間不會出現。格子會紅框＋蟲蟲搖晃提示。</li>
+  </ul>
+  <h3>🥀 枯萎</h3>
+  <ul>
+    <li>成熟後放置超過 <strong>3 倍生長時間</strong>會枯萎，只能用清理工具剷除（血本無歸）。例：胡蘿蔔寬限 90 秒、金蘋果寬限 75 分鐘。</li>
+    <li><strong>離線時間不計入</strong> — 回到遊戲時重新計時，睡覺放心。</li>
+  </ul>
+  <h3>⭐ 優質作物</h3>
+  <ul>
+    <li>收成時機率觸發：基礎 <strong>10%</strong> ＋ 施過肥 <strong>+15%</strong> ＋ 當季 <strong>+10%</strong>（最高 35%）。</li>
+    <li>優質品獨立庫存、<strong>售價 ×2</strong>；不能交訂單、不能當加工原料 — 純賣錢，搭配高行情或市集日出手。</li>
+  </ul>
+  <h3>🧰 道具</h3>
+  <div class="tbl"><table>
+    <tr><th>道具</th><th>解鎖／價格</th><th>效果</th></tr>
+    <tr><td>✨ 快速肥料</td><td>Lv 3・💰30</td><td>立即縮短剩餘生長時間 25%，並使該輪收成優質機率 +15%</td></tr>
+    <tr><td>⛲ 基礎灑水器</td><td>Lv 4・💰250</td><td>放在空地上，自動為周圍 8 格澆水（佔一格；清理工具可收回重放）</td></tr>
+  </table></div>
+  <p class="note">灑水器放農場正中央效益最高；搭配長週期作物幾乎全自動。肥料留給南瓜以上的長週期作物才划算。</p>
+</section>
+
+<section id="s8">
+  <h2 class="sec">8 ・ 市場行情與出售策略</h2>
+  <ul>
+    <li>每種作物的售價<strong>每 5 分鐘</strong>在 <strong>80%～140%</strong> 之間獨立波動；倉庫面板顯示 <span class="pill p-up">▲ 行情 +N%</span>／<span class="pill p-down">▼ 行情 −N%</span>。</li>
+    <li>新遊戲前 5 分鐘行情固定 100%，之後才開始波動。</li>
+    <li><strong>基本紀律：▲ 高於 +20% 清倉、▼ 低於 −10% 囤貨</strong>。倉庫容量就是你的操盤本錢 — 早點擴充。</li>
+    <li>加工品<strong>不吃行情</strong>（固定價），行情爛的時候把作物丟進工坊就是天然的避險。</li>
+    <li>🎪 市集日節慶（售價 +25%）與高行情<strong>相乘</strong> — 兩者疊到 1.4×1.25=1.75 倍時就是本日最佳賣點。</li>
+  </ul>
+</section>
+
+<section id="s9">
+  <h2 class="sec">9 ・ 訂單與加工合約</h2>
+  <div class="tbl"><table>
+    <tr><th>類型</th><th>報酬</th><th>期限</th><th>備註</th></tr>
+    <tr><td>📋 作物訂單</td><td>基礎價 <strong>×1.35</strong> ＋經驗</td><td>30 分鐘</td><td>只會要求你已解鎖的作物</td></tr>
+    <tr><td>🏭 加工合約</td><td>產品價 <strong>×1.5</strong> ＋大量經驗</td><td>45 分鐘</td><td>擁有機器後 30% 機率出現；只出你做得出來的配方</td></tr>
+  </table></div>
+  <ul>
+    <li>同時 3 張，完成或過期立即補新；不喜歡可免費「換一張」。</li>
+    <li>訂單溢價<strong>穩定高於直賣基礎價</strong>，但行情衝到 +35% 以上時直賣反而賺 — 交單前瞄一眼倉庫的行情箭頭。</li>
+    <li>📦 訂單熱潮節慶期間訂單金幣 ×1.5，留幾張肥單等節慶交。</li>
+  </ul>
+</section>
+
+<section id="s10">
+  <h2 class="sec">10 ・ 加工工坊（機器＋配方全表）</h2>
+  <h3>機器</h3>
+  <div class="tbl"><table>
+    <tr><th>機器</th><th>解鎖</th><th class="num">第 1 台</th><th class="num">第 2 台</th><th class="num">第 3 台</th></tr>
+    <tr><td>🧃 果汁機</td><td>Lv 8</td><td class="num">500</td><td class="num">900</td><td class="num">1300</td></tr>
+    <tr><td>🔥 烤爐</td><td>Lv 12</td><td class="num">1500</td><td class="num">2700</td><td class="num">3900</td></tr>
+    <tr><td>🍯 果醬鍋</td><td>Lv 15</td><td class="num">3000</td><td class="num">5400</td><td class="num">7800</td></tr>
+  </table></div>
+  <ul>
+    <li>每台機器可<strong>預排 2 批佇列</strong>（排入當下扣原料）；完成自動入庫、佇列自動接續，<strong>離線照常運作</strong>。</li>
+    <li>開工會自動挑閒置機台；倉庫滿時成品暫留機器上，清出空間再收。</li>
+  </ul>
+  <h3>配方（「增值／分」＝產品價減原料價值，除以製作時間）</h3>
+  <div class="tbl"><table>
+    <tr><th>產品</th><th>機器</th><th>原料</th><th class="num">需時</th><th class="num">售價</th><th class="num">增值／分</th><th class="num">經驗</th></tr>
+    <tr><td>🥤 胡蘿蔔汁</td><td>🧃</td><td>🥕×3</td><td class="num">3 分</td><td class="num">110</td><td class="num">14.7</td><td class="num">8</td></tr>
+    <tr><td>🧃 番茄汁</td><td>🧃</td><td>🍅×3</td><td class="num">4 分</td><td class="num">150</td><td class="num">15.0</td><td class="num">10</td></tr>
+    <tr><td>🍹 草莓奶昔</td><td>🧃</td><td>🍓×4</td><td class="num">6 分</td><td class="num">220</td><td class="num">15.3</td><td class="num">14</td></tr>
+    <tr><td>🍧 西瓜冰沙</td><td>🧃</td><td>🍉×1</td><td class="num">10 分</td><td class="num">1200</td><td class="num"><strong>42.0</strong></td><td class="num">40</td></tr>
+    <tr><td>🍞 麵包</td><td>🔥</td><td>🌾×4</td><td class="num">5 分</td><td class="num">90</td><td class="num">8.4</td><td class="num">12</td></tr>
+    <tr><td>🥖 玉米麵包</td><td>🔥</td><td>🌾×3＋🌽×2</td><td class="num">8 分</td><td class="num">220</td><td class="num">11.8</td><td class="num">18</td></tr>
+    <tr><td>🥧 南瓜派</td><td>🔥</td><td>🎃×1＋🌾×2</td><td class="num">10 分</td><td class="num">420</td><td class="num">16.6</td><td class="num">25</td></tr>
+    <tr><td>🫙 草莓果醬</td><td>🍯</td><td>🍓×6</td><td class="num">10 分</td><td class="num">340</td><td class="num">14.8</td><td class="num">25</td></tr>
+    <tr><td>🍇 藍莓果醬</td><td>🍯</td><td>🫐×5</td><td class="num">12 分</td><td class="num">700</td><td class="num">22.9</td><td class="num">35</td></tr>
+    <tr class="best"><td>🏺 金蘋果蜜</td><td>🍯</td><td>🍎×1＋🫐×2</td><td class="num">20 分</td><td class="num">3600</td><td class="num"><strong>71.5</strong></td><td class="num">100</td></tr>
+  </table></div>
+  <ul>
+    <li>加工是<strong>時間換金幣</strong>：田照種、機器同時轉，兩條產線並行。</li>
+    <li>🍧 西瓜冰沙與 🏺 金蘋果蜜是終局兩大印鈔機；藍莓平常直賣弱，<strong>全部留著做果醬與金蘋果蜜</strong>。</li>
+    <li>下線前把三台機器＋佇列全部掛滿（每台 1 製作中＋2 佇列），睡醒收一整排成品。</li>
+  </ul>
+</section>
+
+<section id="s11">
+  <h2 class="sec">11 ・ 農地・倉庫・等級</h2>
+  <h3>農地解鎖</h3>
+  <div class="tbl"><table>
+    <tr><th>區域</th><th>格數</th><th>需求</th><th class="num">價格</th></tr>
+    <tr><td>初始農地</td><td>24 格</td><td>—</td><td class="num">免費</td></tr>
+    <tr><td>東側農地</td><td>12 格</td><td>Lv 2</td><td class="num">300</td></tr>
+    <tr><td>南側農地</td><td>6 格</td><td>Lv 4</td><td class="num">800</td></tr>
+    <tr><td>河畔農地</td><td>6 格</td><td>Lv 6</td><td class="num">1500</td></tr>
+  </table></div>
+  <h3>倉庫</h3>
+  <p>初始容量 100，每次擴充 +50（費用 200 起、每次 +150，最多 8 次到 <strong>500</strong>）。作物、優質品、加工品<strong>共用容量</strong> — 中後期的瓶頸幾乎都是倉庫，擴充優先於解鎖新農地。</p>
+  <h3>等級</h3>
+  <p>種植 +1、澆水 +1、收成給作物經驗，訂單／任務／加工另計。上限 <strong>Lv 20</strong>，每級有金幣獎勵；Lv 2/4/6 開農地、Lv 3/4 開道具、Lv 8/12/15 開機器、Lv 7/9/13/17 開高階作物、Lv 20 開轉生。</p>
+</section>
+
+<section id="s12">
+  <h2 class="sec">12 ・ 每日任務與成就</h2>
+  <ul>
+    <li>✅ <strong>每日任務</strong>：每天隨機 3 項（種植／澆水／收成／出售／訂單／賺錢／指定作物），完成後記得手動領取，跨日刷新。</li>
+    <li>🏆 <strong>成就</strong>：17 個里程碑<strong>自動偵測、自動發金幣</strong>（首收成、收成 50/200、賣 100、賺 2000、訂單 10、Lv5/10/20、全農地、除蟲 10、優質 10、倉儲 3 擴、加工 1/25、轉生 1/3）。成就與統計<strong>跨轉生保留</strong>。</li>
+  </ul>
+</section>
+
+<section id="s13">
+  <h2 class="sec">13 ・ 節慶限時活動</h2>
+  <p>開局 5 分鐘後第一場，之後約每 30 分鐘隨機一場、每場 <strong>8 分鐘</strong>，橫幅出現發光倒數。離線錯過的場次，回來 2 分鐘後補開。</p>
+  <div class="tbl"><table>
+    <tr><th>節慶</th><th>效果</th><th>怎麼吃滿</th></tr>
+    <tr><td>🎉 豐收祭</td><td>收成經驗 ×2</td><td>把成熟作物憋著，開場一次全收</td></tr>
+    <tr><td>🎪 市集日</td><td>所有售價 +25%（含加工品）</td><td>清倉！與高行情相乘</td></tr>
+    <tr><td>💦 甘霖祭</td><td>生長速度 +50%</td><td>搶種短週期作物多跑一輪</td></tr>
+    <tr><td>📦 訂單熱潮</td><td>訂單金幣 ×1.5</td><td>先備好庫存，開場連交三張</td></tr>
+  </table></div>
+</section>
+
+<section id="s14">
+  <h2 class="sec">14 ・ 轉生系統</h2>
+  <ul>
+    <li>Lv 20 後在 <strong>⚙️ 設定 → 🌟 轉生</strong>開始新的一世。</li>
+    <li><strong>每世永久</strong>：售價 +5%、生長速度 +5%、初始金幣 +200 — 無上限疊加、跨世累積。</li>
+    <li><strong>會重置</strong>：等級、金幣、農地、倉庫、種子、道具、機器、訂單、任務。<strong>會保留</strong>：成就、生涯統計、設定；教學不會重播。</li>
+    <li>時機：Lv 20 後<strong>越早轉越好</strong> — 加成是複利，第二世靠 +5%/+5% 會爬得明顯更快。轉生前把金幣花光（反正會歸零）：不如全部灌進倉庫擴充衝「倉儲大亨」成就，或掛滿最後一輪金蘋果蜜再走。</li>
+  </ul>
+</section>
+
+<section id="s15">
+  <h2 class="sec">15 ・ 開局到終局路線攻略</h2>
+  <ol class="steps">
+    <li><strong>Lv 1–3 胡蘿蔔滾雪球</strong>：全力種胡蘿蔔（春天當季 +30%），收益全數回購種子擴大規模；每日任務順手做，Lv 2 立刻買東側農地。</li>
+    <li><strong>Lv 3–6 建立基本盤</strong>：草莓／番茄進輪作；Lv 4 買灑水器放農場中央、開南側農地；倉庫第一次擴充。訂單能交就交（×1.35 穩賺）。</li>
+    <li><strong>Lv 7–12 產線起步</strong>：Lv 8 買果汁機開始加工；肥料用在南瓜；開始看行情賣（▲+20% 清倉）。Lv 12 烤爐上線，南瓜派是本階段最佳配方。</li>
+    <li><strong>Lv 13–16 雙線並行</strong>：西瓜＋西瓜冰沙（增值 42/分）是中終局主力；果醬鍋上線後藍莓全部做果醬。機器逐步買到每型 2–3 台，倉庫擴到 300+。</li>
+    <li><strong>Lv 17–20 金蘋果經濟</strong>：秋天種金蘋果（+30%）、配藍莓熬金蘋果蜜（增值 71.5/分）；加工合約有金蘋果蜜就是大肥單。衝到 Lv 20。</li>
+    <li><strong>轉生輪迴</strong>：轉生 → 用 +5% 複利更快重走一遍 → 累積世代。每一世都比上一世短，享受滾雪球的快感。</li>
+  </ol>
+</section>
+
+<section id="s16">
+  <h2 class="sec">16 ・ 常見問題 FAQ</h2>
+  <div class="card">
+    <p><strong>Q：離線的時候作物會枯萎或長蟲嗎？</strong><br>不會。離線只有好事：作物照長（中性速度、上限 12 小時）、工坊照做；枯萎計時歸零重算、害蟲不出現。</p>
+    <p><strong>Q：雨天還需要手動澆水嗎？</strong><br>不用，雨天自動幫所有已播種作物澆水，還會沖走害蟲。</p>
+    <p><strong>Q：優質作物可以交訂單或加工嗎？</strong><br>不行，訂單與配方只收一般品；優質品是專門用來賣的（×2 價）。</p>
+    <p><strong>Q：加工品的售價會跟著行情變嗎？</strong><br>不會，加工品固定價（吃轉生與市集日加成）— 行情低迷時把作物做成加工品就是避險。</p>
+    <p><strong>Q：存檔存在哪？換裝置能繼續嗎？</strong><br>存在瀏覽器 localStorage，單機不上雲 — 換裝置或清瀏覽器資料會遺失，請在同一台裝置遊玩。</p>
+    <p><strong>Q：想重看教學／重新開始？</strong><br>⚙️ 設定裡有「重看教學」；「清除存檔」會完全重置（需二次確認，轉生累積也會消失，慎用）。</p>
+    <p><strong>Q：為什麼有時候點格子沒反應？</strong><br>先確認工具列選了正確的工具或種子；鎖定格要先解鎖；有 🐛 的格子會優先觸發驅趕。</p>
+  </div>
+</section>
+
+<footer>
+  <p><a href="./">▶ 回到遊戲</a>　·　<a href="https://tingyudeco.com/portfolio/tools/game-farm" rel="noopener">作品介紹頁</a></p>
+  <p>療癒小農場 Cozy Pocket Farm — 純 HTML5 打造，祝耕種愉快 🌱</p>
+</footer>
+
+</div>
+</body>
+</html>

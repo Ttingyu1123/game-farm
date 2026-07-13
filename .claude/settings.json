@@ -9,7 +9,11 @@
       "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node shot-v15.js)",
       "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node shot-v16.js)",
       "Bash(identify public/images/tools/game-tank/featured_image.webp)",
-      "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node shot-v17.js)"
+      "Bash(NODE_PATH=\"C:/Users/tingy/AppData/Roaming/npm/node_modules\" node shot-v17.js)",
+      "Bash(nslookup game-tank.tingyudeco.com)",
+      "Bash(nslookup game-tank.tingyusdeco.com)",
+      "Bash(sort -t' ' -k2 -n)",
+      "Bash(nslookup game-farm.tingyudeco.com)"
     ]
   }
 }
