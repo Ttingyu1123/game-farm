@@ -3,7 +3,7 @@ import { ITEM_MAP } from '../data/items.js';
 
 const TOOL_INFO = {
   till: ['🪓', '翻土', '開墾未整理的土地'],
-  water: ['💧', '澆水', '為作物澆水，澆水後才會生長'],
+  water: ['🚿', '澆水', '為作物澆水，澆水後才會生長'],
   harvest: ['🧺', '收成', '採收成熟的作物'],
   clear: ['🧹', '清理', '剷除作物或收回灑水器（需確認）'],
 };
@@ -41,7 +41,7 @@ export class Toolbar {
     }
     const fert = s.items.fertilizer || 0;
     const spr = s.items.sprinkler || 0;
-    if (fert > 0) h += tb('fertilizer', `✨<span class="tool-count">${fert}</span>`, ITEM_MAP.fertilizer.desc);
+    if (fert > 0) h += tb('fertilizer', `🧴<span class="tool-count">${fert}</span>`, ITEM_MAP.fertilizer.desc);
     if (spr > 0) h += tb('sprinkler', `⛲<span class="tool-count">${spr}</span>`, ITEM_MAP.sprinkler.desc);
     h += `</div><div class="tool-status">${this.statusText()}</div>`;
     if (sel) h += `<button class="btn btn-small" data-tool-cancel>✖ 取消選擇</button>`;
@@ -57,7 +57,7 @@ export class Toolbar {
     }
     const info = TOOL_INFO[sel];
     if (info) return `目前工具：${info[0]} ${info[1]}`;
-    if (sel === 'fertilizer') return '使用：✨ 快速肥料（點生長中的作物）';
+    if (sel === 'fertilizer') return '使用：🧴 快速肥料（點生長中的作物）';
     if (sel === 'sprinkler') return '放置：⛲ 灑水器（點空的農地）';
     return '';
   }

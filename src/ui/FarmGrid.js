@@ -3,6 +3,7 @@ import { CROP_MAP } from '../data/crops.js';
 import { zoneOfPlot } from '../core/GameState.js';
 import { progressOf, stageIndex, remainingMs } from '../systems/CropSystem.js';
 import { fmtTime } from '../utils/helpers.js';
+import { ico, icoSrc, stageSprite } from './icons.js';
 
 export class FarmGrid {
   constructor(game) {
@@ -28,10 +29,20 @@ export class FarmGrid {
       btn.className = 'plot';
       btn.dataset.i = i;
       btn.setAttribute('aria-label', `農地 ${i + 1}`);
+      // 明確定位，讓鎖定區告示牌能疊在同一批格子上而不擠開它們
+      btn.style.gridArea = `${Math.floor(i / CONFIG.GRID_COLS) + 1} / ${(i % CONFIG.GRID_COLS) + 1}`;
       this.el.appendChild(btn);
       this.cells.push(btn);
       this.sigs.push('');
     }
+    this.signs = CONFIG.ZONES.map((z) => {
+      const sign = document.createElement('div');
+      sign.className = 'zone-sign';
+      sign.style.gridRow = `${Math.min(...z.rows) + 1} / ${Math.max(...z.rows) + 2}`;
+      sign.innerHTML = `${ico('locked')}<span><b>${z.name}</b><small>Lv ${z.level} · ${ico('coin')} ${z.price}</small></span>`;
+      this.el.appendChild(sign);
+      return { zone: z, el: sign };
+    });
     this.el.addEventListener('click', (e) => {
       const cell = e.target.closest('.plot');
       if (!cell) return;
@@ -64,18 +75,28 @@ export class FarmGrid {
   renderAll() {
     if (!this._built || !this.game.state) return;
     for (let i = 0; i < this.cells.length; i++) this.updateCell(i);
+    const unlocked = this.game.state.unlockedZones;
+    for (const { zone, el } of this.signs) el.classList.toggle('hidden', unlocked.includes(zone.id));
   }
 
   updateCell(i) {
     const p = this.game.state.plots[i];
     const v = this.view(p);
-    const sig = `${v.cls}|${v.html}|${v.title}`;
-    if (this.sigs[i] === sig) return;
-    this.sigs[i] = sig;
     const el = this.cells[i];
-    el.className = v.cls + (this.rangeSet.has(i) ? ' range' : '');
-    el.innerHTML = v.html;
-    el.title = v.title;
+    const sig = `${v.cls}|${v.html}`;
+    if (this.sigs[i] !== sig) {
+      this.sigs[i] = sig;
+      el.className = v.cls + (this.rangeSet.has(i) ? ' range' : '');
+      el.innerHTML = v.html;
+    }
+    // 倒數與進度條每秒都變，獨立更新，避免整格重建讓圖片閃爍
+    if (el.title !== v.title) el.title = v.title;
+    if (v.remain !== undefined) {
+      const sub = el.querySelector('.plot-sub');
+      if (sub && sub.textContent !== v.remain) sub.textContent = v.remain;
+      const bar = el.querySelector('.plot-bar > div');
+      if (bar) bar.style.width = `${v.pct}%`;
+    }
   }
 
   view(p) {
@@ -83,63 +104,65 @@ export class FarmGrid {
       const z = zoneOfPlot(p.id);
       return {
         cls: 'plot locked',
-        html: `<span class="plot-icon">🔒</span><span class="plot-sub">Lv${z?.level ?? '?'}·💰${z?.price ?? '?'}</span>`,
+        html: '',
         title: z ? `${z.name}：達到 Lv ${z.level} 後可用 💰${z.price} 解鎖（點擊查看）` : '鎖定',
       };
     }
+    const sprite = (name, grow = 1) =>
+      `<img class="sprite" style="--g:${grow}" src="${icoSrc(name)}" alt="" draggable="false">`;
     if (p.hasSprinkler) {
       return {
         cls: 'plot sprinkler',
-        html: `<span class="plot-icon">⛲</span><span class="plot-sub">自動澆水</span>`,
+        html: sprite('sprinkler'),
         title: '基礎灑水器：自動為周圍 8 格澆水（清理工具可收回）',
       };
     }
     if (!p.cropId) {
       return p.tilled
-        ? { cls: 'plot tilled', html: `<span class="plot-sub">已翻土</span>`, title: '已翻土：選擇種子即可播種' }
-        : { cls: 'plot raw', html: `<span class="plot-sub">未整理</span>`, title: '未整理土地：使用翻土工具開墾' };
+        ? { cls: 'plot tilled', html: '', title: '已翻土：選擇種子即可播種' }
+        : { cls: 'plot raw', html: '', title: '未整理土地：使用翻土工具開墾' };
     }
     const c = CROP_MAP[p.cropId];
     if (p.withered) {
       return {
         cls: 'plot withered',
-        html: `<span class="plot-icon">🥀</span><span class="plot-sub">枯萎了</span>`,
+        html: sprite('withered'),
         title: `${c.name}枯萎了：用清理工具清除`,
       };
     }
     const stage = stageIndex(p);
-    const pct = Math.round(progressOf(p) * 100);
     const mult = this.game.displayMult(c.id);
     let cls = 'plot planted';
-    let statusHtml = '';
+    let badge = '';
     let statusTitle = '';
+    let remain;
     if (p.pest) {
       cls += ' pest';
-      statusHtml = `<span class="plot-sub need">🐛 點我驅趕</span>`;
+      badge = `<span class="plot-badge pest-badge">${ico('pest')}</span>`;
       statusTitle = '🐛 害蟲入侵！生長暫停，點擊驅趕';
     } else if (p.mature) {
       cls += ' mature';
-      statusHtml = `<span class="plot-sub ok">可收成！</span>`;
       statusTitle = '✨ 可收成';
     } else if (!p.watered) {
       cls += ' dry';
-      statusHtml = `<span class="plot-sub need">💧 需澆水</span>`;
+      badge = `<span class="plot-badge need-badge">${ico('drop')}</span>`;
       statusTitle = '💧 需要澆水才會生長';
     } else {
       cls += ' watered growing';
-      const remain = fmtTime(remainingMs(p, mult));
-      statusHtml = `<span class="plot-sub">${remain}</span>`;
+      remain = fmtTime(remainingMs(p, mult));
       statusTitle = `剩餘 ${remain}`;
     }
-    const bar = p.mature ? '' : `<div class="plot-bar"><div style="width:${pct}%"></div></div>`;
-    const pestBadge = p.pest ? `<span class="pest-badge">🐛</span>` : '';
-    const fertBadge = p.fertilized && !p.mature ? `<span class="fert-badge" title="已施肥：優質機率提高">✨</span>` : '';
+    const live = remain === undefined ? '' : `<span class="plot-sub"></span>`;
+    const bar = p.mature ? '' : `<div class="plot-bar"><div></div></div>`;
+    const fertBadge = p.fertilized && !p.mature ? `<span class="plot-badge fert-badge">${ico('fertilizer')}</span>` : '';
     const sMult = this.game.season.mult(c.id);
     const seasonNote = sMult > 1 ? '｜🌟 當季 +30% 生長' : sMult < 1 ? '｜🐌 逆季 -30% 生長' : '';
     return {
       cls,
-      html: `${pestBadge}${fertBadge}<span class="plot-icon stage-${stage}">${c.stageIcons[stage] ?? c.icon}</span>${statusHtml}${bar}`,
+      html: `${badge}${fertBadge}${sprite(stageSprite(c, stage), (stage / (c.stages - 1)).toFixed(2))}${live}${bar}`,
       title: `${c.icon} ${c.name}｜階段 ${stage + 1}/${c.stages}｜${statusTitle}${seasonNote}`,
+      remain: remain ?? '',
+      pct: Math.round(progressOf(p) * 100),
     };
   }
 }

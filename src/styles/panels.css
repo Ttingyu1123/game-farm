@@ -2,8 +2,9 @@
   width: 350px;
   flex: 0 0 350px;
   background: var(--cream);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
+  border-radius: 20px;
+  border: 3px solid var(--line);
+  box-shadow: 0 5px 0 rgba(78, 61, 44, 0.22);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -23,12 +24,14 @@
   padding: 8px 10px;
   border-radius: 10px 10px 0 0;
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--muted);
   transition: background 0.12s, color 0.12s;
 }
 .tab-btn:hover { background: rgba(255, 255, 255, 0.6); }
-.tab-btn.active { background: var(--cream); color: var(--ink); }
+.tab-btn.active { background: var(--cream); color: var(--ink); box-shadow: inset 0 3px 0 var(--accent); }
+.tab-btn .ico { height: 1.6em; vertical-align: -0.42em; }
+.tab-btn:not(.active) .ico { filter: saturate(0.7); opacity: 0.85; }
 
 #panel-content {
   flex: 1;
@@ -37,7 +40,8 @@
   min-height: 0;
 }
 
-.panel-title { margin: 10px 0 8px; font-size: 0.98rem; }
+.panel-title { margin: 10px 0 8px; font-size: 1.05rem; }
+.panel-title .ico { height: 1.6em; vertical-align: -0.42em; }
 .panel-title:first-child { margin-top: 0; }
 
 .shop-row {
@@ -46,13 +50,15 @@
   align-items: center;
   gap: 10px;
   background: #fffdf6;
-  border: 1px solid rgba(120, 84, 44, 0.12);
+  border: 2px solid rgba(107, 81, 56, 0.22);
   border-radius: 12px;
   padding: 8px 10px;
   margin-bottom: 8px;
 }
 .shop-row.locked { opacity: 0.6; }
-.shop-icon { font-size: 1.6rem; }
+.shop-icon { font-size: 1.6rem; line-height: 1; }
+.shop-icon .ico { height: 2.6rem; vertical-align: middle; }
+.shop-row.locked .shop-icon .ico { filter: grayscale(0.8); }
 .shop-info {
   display: flex;
   flex-direction: column;
@@ -111,7 +117,7 @@
 /* 訂單 */
 .order-card {
   background: #fffdf6;
-  border: 1px solid rgba(120, 84, 44, 0.12);
+  border: 2px solid rgba(107, 81, 56, 0.22);
   border-radius: 12px;
   padding: 10px 12px;
   margin-bottom: 10px;
@@ -123,6 +129,7 @@
   margin-bottom: 6px;
 }
 .order-avatar { font-size: 1.4rem; }
+.order-need .ico { height: 1.7em; vertical-align: -0.45em; }
 .order-remain {
   margin-left: auto;
   font-size: 0.78rem;
@@ -139,7 +146,7 @@
   align-items: center;
   gap: 10px;
   background: #fffdf6;
-  border: 1px solid rgba(120, 84, 44, 0.12);
+  border: 2px solid rgba(107, 81, 56, 0.22);
   border-radius: 12px;
   padding: 10px 12px;
   margin-bottom: 8px;
@@ -178,7 +185,7 @@
 /* 加工工坊 */
 .machine-card {
   background: #fffdf6;
-  border: 1px solid rgba(120, 84, 44, 0.12);
+  border: 2px solid rgba(107, 81, 56, 0.22);
   border-radius: 12px;
   padding: 10px 12px;
   margin-bottom: 10px;
@@ -210,7 +217,8 @@
   border-top: 1px dashed rgba(120, 84, 44, 0.15);
 }
 .recipe-row.locked { opacity: 0.55; }
-.recipe-icon { font-size: 1.3rem; }
+.recipe-icon { font-size: 1.3rem; line-height: 1; }
+.recipe-icon .ico { height: 2.1rem; vertical-align: middle; }
 .input-missing { color: #c62828; font-weight: 700; }
 .slot-row {
   padding: 6px 8px;

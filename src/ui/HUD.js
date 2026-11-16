@@ -2,6 +2,13 @@ import { MAX_LEVEL } from '../data/levels.js';
 import { fmtClock } from '../utils/helpers.js';
 import { openSettings } from './SettingsModal.js';
 
+// 圖示由 icons.js 的監看器換入；文字沒變就不重設，否則每個 tick 都會重建圖片
+function setText(el, text) {
+  if (el.dataset.text === text) return;
+  el.dataset.text = text;
+  el.textContent = text;
+}
+
 export class HUD {
   constructor(game) {
     this.game = game;
@@ -38,25 +45,25 @@ export class HUD {
   update() {
     const s = this.game.state;
     if (!s) return;
-    this.coinsEl.textContent = `💰 ${s.coins}`;
-    this.levelEl.textContent = `Lv ${s.level}`;
+    setText(this.coinsEl, `💰 ${s.coins}`);
+    setText(this.levelEl, `Lv ${s.level}`);
     const need = this.game.progression.xpNeeded();
     if (s.level >= MAX_LEVEL || !Number.isFinite(need)) {
       this.xpFill.style.width = '100%';
-      this.xpText.textContent = 'MAX';
+      setText(this.xpText, 'MAX');
     } else {
       this.xpFill.style.width = `${Math.min(100, Math.round((s.xp / need) * 100))}%`;
-      this.xpText.textContent = `${s.xp}/${need}`;
+      setText(this.xpText, `${s.xp}/${need}`);
     }
     const w = this.game.weather.def();
-    this.weatherEl.textContent = `${w.icon} ${w.name}`;
+    setText(this.weatherEl, `${w.icon} ${w.name}`);
     const se = this.game.season.def();
-    this.seasonEl.textContent = `${se.icon} ${se.name}`;
+    setText(this.seasonEl, `${se.icon} ${se.name}`);
     this.seasonEl.title = `季節：${se.desc}（當季 +30% 生長、優質 +10%）`;
     const pr = s.prestige || 0;
     this.prestigeEl.classList.toggle('hidden', pr === 0);
     if (pr > 0) {
-      this.prestigeEl.textContent = `🌟×${pr}`;
+      setText(this.prestigeEl, `🌟×${pr}`);
       this.prestigeEl.title = `第 ${pr} 世農場：永久售價 +${pr * 5}%、生長 +${pr * 5}%`;
     }
   }

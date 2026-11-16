@@ -11,11 +11,13 @@ import { Tutorial } from './ui/Tutorial.js';
 import { Effects } from './ui/Effects.js';
 import { HELP_HTML } from './ui/Help.js';
 import { fmtTime, fmtClock } from './utils/helpers.js';
+import { installIconizer } from './ui/icons.js';
 
 const game = new Game();
 window.game = game;         // 除錯用
 window.gameConfig = CONFIG; // 除錯/測試用
 
+installIconizer();
 initToast(game);
 game.modal = new Modal();
 
@@ -115,7 +117,7 @@ function refreshStartScreen() {
   } else {
     saveHint.textContent = '尚無存檔';
   }
-  btnSound.textContent = soundPref ? '🔊 音效：開' : '🔇 音效：關';
+  btnSound.textContent = soundPref ? '音效：開' : '音效：關';
 }
 refreshStartScreen();
 
@@ -144,7 +146,7 @@ btnHelp.addEventListener('click', () => {
 
 btnSound.addEventListener('click', () => {
   soundPref = !soundPref;
-  btnSound.textContent = soundPref ? '🔊 音效：開' : '🔇 音效：關';
+  btnSound.textContent = soundPref ? '音效：開' : '音效：關';
 });
 
 btnWipe.addEventListener('click', async () => {

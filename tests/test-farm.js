@@ -598,7 +598,7 @@ let page;
   }));
   check('prestige sell bonus +5%', prBonus.price === 23, `price=${prBonus.price}`);
   check('prestige growth bonus +5%', prBonus.mult === 1.05);
-  check('HUD shows prestige star', (await page.locator('#hud-prestige').textContent()).includes('🌟×1'));
+  check('HUD shows prestige star', (await page.locator('#hud-prestige').textContent()).includes('×1'));
   // 轉生後任務事件不重複計數（系統單次建立守衛）
   await page.evaluate(() => {
     const g = window.game;

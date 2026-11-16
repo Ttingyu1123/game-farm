@@ -5,7 +5,7 @@ export class TaskPanel {
 
   html() {
     const s = this.game.state;
-    let h = `<h4 class="panel-title">✅ 每日任務 <span class="muted small">（${s.dailyTaskDate}，每天更新）</span></h4>`;
+    let h = `<h4 class="panel-title">📝 每日任務 <span class="muted small">（${s.dailyTaskDate}，每天更新）</span></h4>`;
     if (!s.dailyTasks.length) {
       h += `<div class="empty-state">今天的任務準備中…</div>`;
       return h;

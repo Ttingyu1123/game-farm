@@ -278,7 +278,7 @@ export class FarmSystem {
       g.events.emit('crop:matured', p);
     }
     g.audio.play('plant');
-    g.toast(`✨ 施肥完成，${c.name}生長加速、優質機率提高！`, 'success');
+    g.toast(`🧴 施肥完成，${c.name}生長加速、優質機率提高！`, 'success');
     g.events.emit('item:used', { itemId: 'fertilizer', plot: p });
     g.changed();
   }

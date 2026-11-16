@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#a8d08d">
 <title>療癒小農場 Cozy Pocket Farm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;700&display=swap">
 <link rel="stylesheet" href="src/styles/main.css">
 <link rel="stylesheet" href="src/styles/farm.css">
 <link rel="stylesheet" href="src/styles/panels.css">
@@ -20,11 +23,11 @@
     <p class="subtitle">Cozy Pocket Farm</p>
     <div class="start-buttons">
       <button id="btn-new-game" class="btn btn-primary">🌟 開始新遊戲</button>
-      <button id="btn-continue" class="btn" disabled>▶️ 繼續遊戲</button>
-      <button id="btn-help" class="btn">📖 遊戲說明</button>
-      <a id="btn-guide" class="btn" href="guide.html" target="_blank" rel="noopener">📚 完整攻略</a>
-      <button id="btn-sound-toggle" class="btn">🔊 音效：開</button>
-      <button id="btn-wipe-save" class="btn btn-danger">🗑️ 清除存檔</button>
+      <button id="btn-continue" class="btn" disabled>繼續遊戲</button>
+      <button id="btn-help" class="btn">遊戲說明</button>
+      <a id="btn-guide" class="btn" href="guide.html" target="_blank" rel="noopener">完整攻略</a>
+      <button id="btn-sound-toggle" class="btn">音效：開</button>
+      <button id="btn-wipe-save" class="btn btn-danger">清除存檔</button>
     </div>
     <p class="save-hint" id="start-save-hint"></p>
   </div>
@@ -35,11 +38,19 @@
   <header id="hud"></header>
   <main id="layout">
     <section id="farm-area">
-      <div id="cloud-layer" aria-hidden="true">
-        <span class="cloud c1">☁️</span>
-        <span class="cloud c2">☁️</span>
-        <span class="cloud c3">⛅</span>
-        <span class="cloud c4">☁️</span>
+      <div id="scene" aria-hidden="true">
+        <div id="cloud-layer">
+          <span class="cloud c1"></span>
+          <span class="cloud c2"></span>
+          <span class="cloud c3"></span>
+          <span class="cloud c4"></span>
+        </div>
+        <span class="deco barn"></span>
+        <span class="deco bush"></span>
+        <span class="deco scarecrow"></span>
+        <span class="deco tree t1"></span>
+        <span class="deco tree t2"></span>
+        <div class="fence"></div>
       </div>
       <div id="weather-banner"></div>
       <div id="farm-grid" role="grid" aria-label="農場"></div>
@@ -51,7 +62,7 @@
         <button data-tab="inventory" class="tab-btn">🎒 背包</button>
         <button data-tab="workshop" class="tab-btn">🏭 工坊</button>
         <button data-tab="orders" class="tab-btn">📋 訂單</button>
-        <button data-tab="tasks" class="tab-btn">✅ 任務</button>
+        <button data-tab="tasks" class="tab-btn">📝 任務</button>
         <button data-tab="achievements" class="tab-btn">🏆 成就</button>
       </nav>
       <div id="panel-content"></div>

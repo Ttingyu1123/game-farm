@@ -30,23 +30,32 @@
 /* 手機 */
 @media (max-width: 560px) {
   #layout { padding: 8px; gap: 8px; }
-  #farm-area { padding: 8px; }
   #farm-grid { gap: 6px; grid-template-columns: repeat(6, minmax(44px, 1fr)); }
-  .plot { border-radius: 10px; }
-  .plot-icon { font-size: 1.15rem; }
-  .stage-0 { font-size: 0.7rem; }
-  .stage-1 { font-size: 0.85rem; }
-  .stage-2 { font-size: 1rem; }
-  .stage-3 { font-size: 1.15rem; }
-  .stage-4 { font-size: 1.3rem; }
-  .stage-5 { font-size: 1.45rem; }
-  .plot-sub { font-size: 0.52rem; }
+  .plot { border-radius: 10px; border-width: 2px; }
+  #farm-grid { padding: 10px 8px 14px; }
+  #scene { height: 126px; }
+  .deco.barn { left: 2%; width: 78px; height: 74px; }
+  .deco.bush { display: none; }
+  .deco.scarecrow { right: calc(3% + 104px); width: 38px; height: 46px; }
+  .deco.tree.t1 { right: 3%; width: 64px; height: 68px; }
+  .deco.tree.t2 { right: calc(3% + 56px); width: 46px; height: 50px; }
+  .fence { height: 22px; }
+  .zone-sign { padding: 4px 12px 4px 8px; font-size: 0.85rem; }
+  .zone-sign > .ico { height: 34px; }
+  .tool-btn .ico { height: 30px; }
   #hud { padding: 6px 8px; gap: 6px; }
   .hud-title { display: none; }
-  #xp-bar { width: 100px; }
+  #xp-bar { width: 64px; }
   #hud-save { display: none; }
   .start-card { padding: 28px 22px; }
   .tool-name { display: none; }
+  /* 種子列改單行橫向捲動，工具列固定兩行不再隨作物數量長高 */
+  #toolbar { gap: 8px; }
+  .tool-group { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; padding: 5px 2px 4px; scrollbar-width: none; }
+  .tool-group::-webkit-scrollbar { display: none; }
+  .tool-btn { flex: 0 0 auto; }
+  .hud-chip { font-size: 0.85rem; padding: 1px 9px 1px 6px; }
+  .hud-right { margin-left: 0; }
   .tool-btn { padding: 8px 10px; }
   #side-panels { max-height: 52vh; }
   .qty-btns .btn-small { padding: 6px 10px; font-size: 0.8rem; } /* 觸控目標加大 */
@@ -57,6 +66,5 @@
   .modal-card { padding: 16px 16px; }
   .modal-actions .btn { padding: 10px 18px; } /* 確認按鈕好按 */
   .order-actions .btn-small, .task-row .btn-small { padding: 7px 14px; }
-  .cloud { opacity: 0.3; } /* 小螢幕雲朵更低調 */
-  #weather-banner { font-size: 0.8rem; padding: 4px 12px; }
+  #weather-banner { font-size: 0.76rem; padding: 3px 10px; top: 6px; left: 6px; right: 6px; max-width: calc(100% - 12px); border-radius: 14px; }
 }
