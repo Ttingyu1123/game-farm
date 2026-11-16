@@ -476,16 +476,35 @@ let page;
   // 背景音樂引擎
   s = await state();
   check('music setting default on', s.settings.music === true);
-  const musicOk = await page.evaluate(() => {
+  const musicOk = await page.evaluate(async () => {
     try {
       const a = window.game.audio;
+      const st = window.game.state;
       a.stopMusic(); a.startMusic();
-      const on = !!a._musicTimer;
+      const on = a._musicOn;
+      const src = a._el.src;
+      const wantSrc = src.endsWith(`/bgm/${st.season.current}.m4a`);
+      // 換季：淡出後換成新一季的曲子
+      const next = st.season.current === 'spring' ? 'summer' : 'spring';
+      a._clearFade(); a._el.volume = 0.5;
+      Object.defineProperty(a._el, 'paused', { get: () => false, configurable: true });
+      a._switchTrack(next);
+      await new Promise((r) => setTimeout(r, 1600));
+      delete a._el.paused;
+      const switched = a._el.src.endsWith(`/bgm/${next}.m4a`);
+      // 音檔載入失敗：退回程式生成的備援音樂
+      a._el.dispatchEvent(new Event('error'));
+      const fellBack = a._trackFailed && !!a._musicTimer;
       a.stopMusic();
-      return { ok: true, on, off: !a._musicTimer };
+      const off = !a._musicOn && !a._musicTimer && a._el.paused;
+      a._trackFailed = false;
+      return { ok: true, on, wantSrc, switched, fellBack, off, src };
     } catch (e) { return { ok: false, err: String(e) }; }
   });
   check('music engine start/stop safe', musicOk.ok && musicOk.on && musicOk.off, JSON.stringify(musicOk));
+  check('music plays the current season track', musicOk.wantSrc, JSON.stringify(musicOk));
+  check('music switches track on season change', musicOk.switched, JSON.stringify(musicOk));
+  check('music falls back to synth when track fails', musicOk.fellBack, JSON.stringify(musicOk));
 
   // 存檔 & 重新載入
   await page.evaluate(() => window.game.save.save());

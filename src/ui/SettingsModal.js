@@ -44,6 +44,7 @@ export function openSettings(game) {
   root.querySelector('#set-volume').addEventListener('input', (e) => {
     s.settings.volume = Number(e.target.value);
     game.changed();
+    game.audio.syncVolume();
     game.audio.play('click');
   });
   root.querySelector('#set-prestige').addEventListener('click', async () => {

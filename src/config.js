@@ -83,4 +83,9 @@ export const CONFIG = {
     growthBonus: 0.05,     // 每世永久生長速度 +5%
     startCoinsBonus: 200,  // 每世初始金幣 +200
   },
+  BGM: {
+    baseUrl: 'https://music.tingyudeco.com/game-farm/bgm/', // 四季各一首：<seasonId>.m4a
+    ext: '.m4a',
+    fadeMs: 1200,
+  },
 };
