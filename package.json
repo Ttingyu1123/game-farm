@@ -1,7 +1,7 @@
 {
   "name": "cozy-pocket-farm",
-  "version": "1.6.0",
-  "description": "療癒小農場 — 原創點擊式農場經營遊戲（純 HTML5/ES Modules，零依賴）",
+  "version": "1.8.0",
+  "description": "療癒小農場 — 原創點擊式農場經營遊戲（純 HTML5/ES Modules，零建置）",
   "private": true,
   "scripts": {
     "dev": "python -m http.server 5317",
